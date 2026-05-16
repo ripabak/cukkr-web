@@ -21,8 +21,8 @@ export function ServiceSelector({ services, selected, onChange }: ServiceSelecto
       onChange(selected.filter(s => s.id !== service.id));
     } else {
       const finalPrice =
-        service.discountPercent
-          ? Math.round(service.price * (1 - service.discountPercent / 100))
+        service.discount
+          ? Math.round(service.price * (1 - service.discount / 100))
           : service.price;
       onChange([
         ...selected,
@@ -30,7 +30,7 @@ export function ServiceSelector({ services, selected, onChange }: ServiceSelecto
           id: service.id,
           name: service.name,
           price: finalPrice,
-          discountPercent: service.discountPercent,
+          discount: service.discount,
         },
       ]);
     }
@@ -40,8 +40,8 @@ export function ServiceSelector({ services, selected, onChange }: ServiceSelecto
     <div className="flex flex-col gap-2">
       {services.map(service => {
         const isSelected = selectedIds.has(service.id);
-        const discountedPrice = service.discountPercent
-          ? Math.round(service.price * (1 - service.discountPercent / 100))
+        const discountedPrice = service.discount
+          ? Math.round(service.price * (1 - service.discount / 100))
           : null;
 
         return (

@@ -1,137 +1,85 @@
-const getApiUrl = () => (process.env.NEXT_PUBLIC_AUTH_URL ?? '').replace(/\/$/, '');
+import { app } from '@/lib/eden-app';
+import type { App } from '@/src/types/app';
 
-export interface BarbershopPublicInfo {
-  id: string;
-  name: string;
-  slug: string;
-  description?: string | null;
-  address?: string | null;
-  phone?: string | null;
-  logoUrl?: string | null;
+// App['~Routes'] contains a catch-all index signature from the type-share-eden-elysia
+// plugin ({ [x: string]: { get: BunFile } }). Index signatures make keyof return
+// `string`, breaking mapped types. Use conditional inference instead of property
+// access to extract route schemas from specific named route blocks.
+type Routes = App['~Routes'];
+
+type ApiPublicBarbershopSlug = Routes extends {
+  api: { public: { barbershop: { ':slug': infer R } } };
+} ? R : never;
+
+type ApiPublicBookingSlug = Routes extends {
+  api: { public: { booking: { ':slug': infer R } } };
+} ? R : never;
+
+type PublicBookingSlug = Routes extends {
+  public: { booking: { ':slug': infer R } };
+} ? R : never;
+
+type GetRoute<T> = T extends { get: infer G } ? G : never;
+type PostRoute<T> = T extends { post: infer P } ? P : never;
+type RouteResponseData<T> = T extends { response: { 200: { data: infer D } } } ? D : never;
+type RouteBody<T> = T extends { body: infer B } ? B : never;
+
+export type BarbershopPublicInfo = RouteResponseData<GetRoute<ApiPublicBarbershopSlug>>;
+export type PublicFormData = RouteResponseData<GetRoute<ApiPublicBookingSlug extends { 'form-data': infer R } ? R : never>>;
+export type PublicService = PublicFormData['services'][number];
+export type PublicBarber = PublicFormData['barbers'][number];
+export type CreateWalkInPayload = RouteBody<PostRoute<PublicBookingSlug extends { 'walk-in': infer R } ? R : never>>;
+export type CreateAppointmentPayload = RouteBody<PostRoute<PublicBookingSlug extends { appointment: infer R } ? R : never>>;
+
+function throwIfError(error: unknown): never {
+  throw new Error((error as any)?.value?.message ?? 'Request failed');
 }
 
-export interface PublicOpenHoursDay {
-  dayOfWeek: number;
-  isOpen: boolean;
-  openTime?: string | null;
-  closeTime?: string | null;
-}
-
-export interface PublicService {
-  id: string;
-  name: string;
-  price: number;
-  discountPercent?: number | null;
-  imageUrl?: string | null;
-  isDefault?: boolean;
-}
-
-export interface PublicBarber {
-  id: string;
-  name: string;
-  avatarUrl?: string | null;
-}
-
-export interface PublicFormData {
-  services: PublicService[];
-  barbers: PublicBarber[];
-}
-
-export interface CreateWalkInPayload {
-  validationToken: string;
-  customerName: string;
-  customerPhone?: string | null;
-  serviceIds: string[];
-  barberId?: string | null;
-  notes?: string | null;
-}
-
-export interface CreateAppointmentPayload {
-  customerName: string;
-  customerPhone?: string | null;
-  serviceIds: string[];
-  barberId?: string | null;
-  scheduledAt: string;
-  notes?: string | null;
-}
-
-async function apiFetch<T>(url: string, options?: RequestInit): Promise<T> {
-  const res = await fetch(url, options);
-  const json = await res.json().catch(() => ({}));
-  if (!res.ok) {
-    throw new Error(json?.message || `Request failed (${res.status})`);
-  }
-  return (json?.data ?? json) as T;
-}
+// The treaty proxy constructs URLs correctly at runtime but TypeScript can't resolve
+// the client type due to the catch-all index signature. Cast to any; explicit return
+// types on each function preserve safety.
+const eden = app as any;
 
 export const publicBookingService = {
   async getBarbershopInfo(slug: string): Promise<BarbershopPublicInfo> {
-    return apiFetch<BarbershopPublicInfo>(`${getApiUrl()}/api/public/barbershop/${slug}`);
+    const { data, error } = await eden.api.public.barbershop({ slug }).get();
+    if (error) throwIfError(error);
+    return data.data;
   },
 
-  async getDateAvailability(
-    slug: string,
-    date: string
-  ): Promise<{ isOpen: boolean; openTime?: string | null; closeTime?: string | null } | null> {
-    try {
-      const res = await fetch(
-        `${getApiUrl()}/api/public/barbershop/${slug}/availability?date=${date}`
-      );
-      const json = await res.json().catch(() => null);
-      if (!res.ok || !json) return null;
-
-      const raw = json?.data ?? json;
-
-      // weekly array — find the matching day
-      if (Array.isArray(raw)) {
-        const d = new Date(date);
-        const match = raw.find((day: any) => day.dayOfWeek === d.getDay());
-        return match ?? null;
-      }
-
-      // single-day object
-      if (raw && typeof raw === 'object' && 'isOpen' in raw) {
-        return {
-          isOpen: Boolean(raw.isOpen),
-          openTime: raw.openTime ?? null,
-          closeTime: raw.closeTime ?? null,
-        };
-      }
-
-      return null;
-    } catch {
-      return null;
-    }
+  async getDateAvailability(slug: string, date: string) {
+    type AvailabilityData = RouteResponseData<GetRoute<
+      Routes extends { public: { barbershop: { ':slug': { availability: infer R } } } } ? R : never
+    >>;
+    const { data, error } = await eden.api.public.barbershop({ slug }).availability.get({ query: { date } });
+    if (error || !data) return null;
+    return data.data as AvailabilityData | null;
   },
 
   async getFormData(slug: string): Promise<PublicFormData> {
-    return apiFetch<PublicFormData>(`${getApiUrl()}/api/public/booking/${slug}/form-data`);
+    const { data, error } = await eden.api.public.booking({ slug })['form-data'].get();
+    if (error) throwIfError(error);
+    return data.data;
   },
 
-  async validatePin(slug: string, pin: string): Promise<{ validationToken: string }> {
-    return apiFetch<{ validationToken: string }>(
-      `${getApiUrl()}/api/public/booking/${slug}/pin/validate`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ pin }),
-      }
-    );
+  async validatePin(slug: string, pin: string) {
+    type PinData = RouteResponseData<PostRoute<
+      Routes extends { public: { booking: { ':slug': { pin: { validate: infer R } } } } } ? R : never
+    >>;
+    const { data, error } = await eden.api.public.booking({ slug }).pin.validate.post({ pin });
+    if (error) throwIfError(error);
+    return data.data as PinData;
   },
 
-  async createWalkIn(slug: string, payload: CreateWalkInPayload): Promise<unknown> {
-    return apiFetch(`${getApiUrl()}/api/public/booking/${slug}/walk-in`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
-    });
+  async createWalkIn(slug: string, body: CreateWalkInPayload) {
+    const { data, error } = await eden.api.public.booking({ slug })['walk-in'].post(body);
+    if (error) throwIfError(error);
+    return data.data;
   },
 
-  async createAppointment(slug: string, payload: CreateAppointmentPayload): Promise<unknown> {
-    return apiFetch(`${getApiUrl()}/api/public/booking/${slug}/appointment`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
-    });
+  async createAppointment(slug: string, body: CreateAppointmentPayload) {
+    const { data, error } = await eden.api.public.booking({ slug }).appointment.post(body);
+    if (error) throwIfError(error);
+    return data.data;
   },
 };

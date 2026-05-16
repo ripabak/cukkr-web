@@ -4,7 +4,7 @@ export interface PublicSelectedService {
   id: string;
   name: string;
   price: number;
-  discountPercent?: number | null;
+  discount?: number | null;
 }
 
 export interface PublicIdentity {

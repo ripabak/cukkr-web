@@ -56,7 +56,7 @@ export default async function BarbershopLandingPage({
           </div>
 
           {/* Info rows */}
-          {(barbershop.address || barbershop.phone) && (
+          {(barbershop.address) && (
             <div
               className="rounded-2xl p-4 mb-8 flex flex-col gap-3"
               style={{ backgroundColor: '#f9f9f9' }}
@@ -69,18 +69,6 @@ export default async function BarbershopLandingPage({
                   </span>
                 </div>
               )}
-              {barbershop.phone && (
-                <div className="flex items-center gap-3">
-                  <span className="text-base">📞</span>
-                  <a
-                    href={`tel:${barbershop.phone}`}
-                    className="text-sm font-medium"
-                    style={{ color: '#1a1a1a' }}
-                  >
-                    {barbershop.phone}
-                  </a>
-                </div>
-              )}
             </div>
           )}
 
@@ -89,12 +77,6 @@ export default async function BarbershopLandingPage({
             href={`/${slug}/booking`}
             className="block w-full py-4 text-center rounded-2xl font-bold text-base transition-all"
             style={{ backgroundColor: '#ffc81e', color: '#1a1a1a' }}
-            onMouseEnter={(e: React.MouseEvent<HTMLAnchorElement>) =>
-              ((e.currentTarget as HTMLElement).style.backgroundColor = '#e6b80b')
-            }
-            onMouseLeave={(e: React.MouseEvent<HTMLAnchorElement>) =>
-              ((e.currentTarget as HTMLElement).style.backgroundColor = '#ffc81e')
-            }
           >
             Booking Sekarang
           </Link>

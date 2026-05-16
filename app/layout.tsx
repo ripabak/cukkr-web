@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "FADHR LABS",
-  description: "An independent design and research laboratory, and publisher.",
+  title: "CUKKR — Minimalistic Barbershop",
+  description: "A barbershop built on precision, simplicity, and respect for your time.",
 };
 
 export default function RootLayout({

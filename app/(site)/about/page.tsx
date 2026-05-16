@@ -11,7 +11,7 @@ export default function AboutPage() {
           FADHR LABS is an independent design and research laboratory, and publisher dedicated to building tools that expand human capability.
         </p>
       </div>
-      
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mt-12 border-t border-border pt-12">
         <div className="flex flex-col gap-4">
           <h2 className="text-2xl font-bold tracking-tight">Our Mission</h2>
@@ -19,7 +19,7 @@ export default function AboutPage() {
             We aim to create minimalist, highly functional software that respects user attention. By blending brutalist design principles with modern web technologies, we build experiences that are both raw and refined.
           </p>
         </div>
-        
+
         <div className="flex flex-col gap-4">
           <h2 className="text-2xl font-bold tracking-tight">Contact</h2>
           <p className="text-lg opacity-80 leading-relaxed mb-4">

@@ -17,7 +17,7 @@ export function PinInput({ value, onChange, disabled, hasError }: PinInputProps)
     useRef<HTMLInputElement>(null),
   ];
 
-  const digits = value.padEnd(4, '').split('').slice(0, 4);
+  const digits = value.padEnd(4, ' ').split('').slice(0, 4);
 
   const handleChange = (index: number, char: string) => {
     if (!/^\d*$/.test(char)) return;

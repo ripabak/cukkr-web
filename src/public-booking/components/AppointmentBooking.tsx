@@ -3,7 +3,11 @@
 import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { usePublicBooking } from '@/src/public-booking/context/PublicBookingContext';
-import { createAppointment } from '@/src/public-booking/actions/booking.actions';
+import {
+  createAppointment,
+  getDateAvailability,
+  type DateAvailability,
+} from '@/src/public-booking/actions/booking.actions';
 import type { PublicFormData } from '@/src/public-booking/actions/booking.actions';
 import { BookingHeader } from '@/src/public-booking/components/BookingHeader';
 import { ServiceSelector } from '@/src/public-booking/components/ServiceSelector';
@@ -26,6 +30,23 @@ const STEP_SUBTITLES: Record<Step, string> = {
   recap: 'Check everything before confirming',
   success: '',
 };
+
+const SLOT_INTERVAL = 30;
+
+function generateTimeSlots(openTime: string, closeTime: string): string[] {
+  const [openH, openM] = openTime.split(':').map(Number);
+  const [closeH, closeM] = closeTime.split(':').map(Number);
+  const slots: string[] = [];
+  let cur = openH * 60 + openM;
+  const end = closeH * 60 + closeM;
+  while (cur < end) {
+    const h = Math.floor(cur / 60).toString().padStart(2, '0');
+    const m = (cur % 60).toString().padStart(2, '0');
+    slots.push(`${h}:${m}`);
+    cur += SLOT_INTERVAL;
+  }
+  return slots;
+}
 
 function formatPrice(price: number) {
   return `Rp${price.toLocaleString('id-ID')}`;
@@ -58,11 +79,34 @@ export function AppointmentBooking({ slug, formData }: Props) {
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [dateValue, setDateValue] = useState('');
   const [timeValue, setTimeValue] = useState('');
+  const [availability, setAvailability] = useState<DateAvailability | null>(null);
+  const [isLoadingAvailability, setIsLoadingAvailability] = useState(false);
   const [isSubmitPending, startSubmitTransition] = useTransition();
 
   const stepIndex = ORDERED.indexOf(step);
   const currentStepNumber = stepIndex === -1 ? ORDERED.length : stepIndex + 1;
   const todayStr = new Date().toISOString().split('T')[0];
+
+  const timeSlots =
+    availability?.isOpen && availability.openTime && availability.closeTime
+      ? generateTimeSlots(availability.openTime, availability.closeTime)
+      : [];
+
+  const handleDateChange = async (date: string) => {
+    setDateValue(date);
+    setTimeValue('');
+    setAvailability(null);
+    if (!date) return;
+    setIsLoadingAvailability(true);
+    try {
+      const result = await getDateAvailability(slug, date);
+      setAvailability(result);
+    } catch {
+      setAvailability(null);
+    } finally {
+      setIsLoadingAvailability(false);
+    }
+  };
 
   const handleBack = () => {
     setSubmitError(null);
@@ -192,31 +236,61 @@ export function AppointmentBooking({ slug, formData }: Props) {
               />
             </div>
 
-            <div className="flex flex-col gap-4">
+            <div>
+              <label className="block text-sm font-semibold mb-1.5 text-[#1a1a1a]">
+                Date <span className="text-[#ef4444]">*</span>
+              </label>
+              <input
+                type="date"
+                value={dateValue}
+                min={todayStr}
+                onChange={e => handleDateChange(e.target.value)}
+                className="w-full px-4 py-3 rounded-xl text-sm outline-none transition-all border-2 border-[#ebebeb] text-[#1a1a1a] bg-white focus:border-[#ffc81e]"
+              />
+            </div>
+
+            {dateValue && (
               <div>
-                <label className="block text-sm font-semibold mb-1.5 text-[#1a1a1a]">
-                  Date <span className="text-[#ef4444]">*</span>
-                </label>
-                <input
-                  type="date"
-                  value={dateValue}
-                  min={todayStr}
-                  onChange={e => setDateValue(e.target.value)}
-                  className="w-full px-4 py-3 rounded-xl text-sm outline-none transition-all border-2 border-[#ebebeb] text-[#1a1a1a] bg-white focus:border-[#ffc81e]"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-semibold mb-1.5 text-[#1a1a1a]">
+                <label className="block text-sm font-semibold mb-2 text-[#1a1a1a]">
                   Time <span className="text-[#ef4444]">*</span>
                 </label>
-                <input
-                  type="time"
-                  value={timeValue}
-                  onChange={e => setTimeValue(e.target.value)}
-                  className="w-full px-4 py-3 rounded-xl text-sm outline-none transition-all border-2 border-[#ebebeb] text-[#1a1a1a] bg-white focus:border-[#ffc81e]"
-                />
+
+                {isLoadingAvailability && (
+                  <div className="flex items-center gap-2 py-4 text-sm text-[#9ca3af]">
+                    <svg className="animate-spin" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                      <circle cx="8" cy="8" r="6" stroke="#d1d5db" strokeWidth="2" />
+                      <path d="M8 2a6 6 0 0 1 6 6" stroke="#ffc81e" strokeWidth="2" strokeLinecap="round" />
+                    </svg>
+                    Checking availability...
+                  </div>
+                )}
+
+                {!isLoadingAvailability && availability && !availability.isOpen && (
+                  <div className="rounded-xl px-4 py-3 text-sm bg-[#fef2f2] border border-[#fecaca] text-[#ef4444]">
+                    Barbershop is closed on this date. Please choose another date.
+                  </div>
+                )}
+
+                {!isLoadingAvailability && timeSlots.length > 0 && (
+                  <div className="grid grid-cols-4 gap-2">
+                    {timeSlots.map(slot => (
+                      <button
+                        key={slot}
+                        type="button"
+                        onClick={() => setTimeValue(slot)}
+                        className={`py-2 rounded-xl text-sm font-medium transition-all border-2 ${
+                          timeValue === slot
+                            ? 'bg-[#ffc81e] border-[#ffc81e] text-[#1a1a1a]'
+                            : 'bg-white border-[#ebebeb] text-[#1a1a1a] hover:border-[#ffc81e]'
+                        }`}
+                      >
+                        {slot}
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
-            </div>
+            )}
 
             <div>
               <label className="block text-sm font-semibold mb-1.5 text-[#1a1a1a]">

@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import { publicBookingService } from '@/src/public-booking/services/public-booking.service';
+import { getBarbershopInfo } from '@/src/public-booking/actions/booking.actions';
 
 export default async function BarbershopLandingPage({
   params,
@@ -11,7 +11,7 @@ export default async function BarbershopLandingPage({
 
   let barbershop;
   try {
-    barbershop = await publicBookingService.getBarbershopInfo(slug);
+    barbershop = await getBarbershopInfo(slug);
   } catch {
     notFound();
   }

@@ -13,6 +13,13 @@ async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> {
   return json.data as T;
 }
 
+export interface DateAvailability {
+  date: string;
+  isOpen: boolean;
+  openTime: string | null;
+  closeTime: string | null;
+}
+
 export interface PublicService {
   id: string;
   name: string;
@@ -44,6 +51,10 @@ export interface BarbershopInfo {
 
 export async function getBarbershopInfo(slug: string): Promise<BarbershopInfo> {
   return apiFetch(`/api/public/barbershop/${slug}`);
+}
+
+export async function getDateAvailability(slug: string, date: string): Promise<DateAvailability> {
+  return apiFetch(`/api/public/barbershop/${slug}/availability?date=${date}`);
 }
 
 export async function getFormData(slug: string): Promise<PublicFormData> {

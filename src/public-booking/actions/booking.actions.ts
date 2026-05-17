@@ -1,0 +1,95 @@
+'use server';
+
+function getBase() {
+  const base = process.env.API_URL ?? process.env.NEXT_PUBLIC_API_URL;
+  if (!base) throw new Error('API_URL is not set');
+  return base.replace(/\/$/, '');
+}
+
+async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> {
+  const res = await fetch(`${getBase()}${path}`, init);
+  const json = await res.json();
+  if (!res.ok) throw new Error(json?.message ?? 'Request failed');
+  return json.data as T;
+}
+
+export interface PublicService {
+  id: string;
+  name: string;
+  price: number;
+  discount?: number | null;
+  duration?: number;
+  description?: string | null;
+  imageUrl?: string | null;
+  isDefault?: boolean;
+}
+
+export interface PublicBarber {
+  id: string;
+  name: string;
+  avatarUrl: string | null;
+}
+
+export interface PublicFormData {
+  services: PublicService[];
+  barbers: PublicBarber[];
+}
+
+export interface BarbershopInfo {
+  name: string;
+  description?: string | null;
+  address?: string | null;
+  logoUrl?: string | null;
+}
+
+export async function getBarbershopInfo(slug: string): Promise<BarbershopInfo> {
+  return apiFetch(`/api/public/barbershop/${slug}`);
+}
+
+export async function getFormData(slug: string): Promise<PublicFormData> {
+  return apiFetch(`/api/public/booking/${slug}/form-data`);
+}
+
+export async function validatePin(slug: string, pin: string): Promise<{ validationToken: string }> {
+  return apiFetch(`/api/public/booking/${slug}/pin/validate`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ pin }),
+  });
+}
+
+export async function createWalkIn(
+  slug: string,
+  payload: {
+    validationToken: string;
+    customerName: string;
+    customerPhone: string | null;
+    serviceIds: string[];
+    barberId: string | null;
+    notes: string | null;
+  },
+): Promise<void> {
+  await apiFetch(`/api/public/booking/${slug}/walk-in`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+}
+
+export async function createAppointment(
+  slug: string,
+  payload: {
+    customerName: string;
+    customerPhone: string | null;
+    serviceIds: string[];
+    barberId: string | null;
+    scheduledAt: string;
+    notes: string | null;
+  },
+): Promise<void> {
+  await apiFetch(`/api/public/booking/${slug}/appointment`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+}

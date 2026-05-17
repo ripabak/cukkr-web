@@ -1,6 +1,6 @@
 'use client';
 
-import { PublicBarber } from '../services/public-booking.service';
+import { PublicBarber } from '../actions/booking.actions';
 
 interface BarberSelectorProps {
   barbers: PublicBarber[];

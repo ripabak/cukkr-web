@@ -1,7 +1,7 @@
 'use client';
 
 import { PublicSelectedService } from '../context/PublicBookingContext';
-import { PublicService } from '../services/public-booking.service';
+import { PublicService } from '../actions/booking.actions';
 
 interface ServiceSelectorProps {
   services: PublicService[];

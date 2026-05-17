@@ -87,9 +87,20 @@ export default function Home() {
 
       {/* Marquee strip */}
       <div className="bg-[#ffc81e] py-3 overflow-hidden whitespace-nowrap border-b border-[#e6b80b]">
-        <div className="inline-flex gap-16 text-[#1a1a1a] text-xs font-black tracking-[0.3em] uppercase">
-          {Array.from({ length: 8 }).map((_, i) => (
-            <span key={i} className="inline-flex items-center gap-16">
+        <div
+          className="inline-flex text-[#1a1a1a] text-xs font-black tracking-[0.3em] uppercase"
+          style={{ animation: "marquee 20s linear infinite" }}
+        >
+          {Array.from({ length: 2 }).map((_, i) => (
+            <span key={i} className="inline-flex items-center gap-12 pr-12">
+              <span>Walk-In Queue</span>
+              <span>&mdash;</span>
+              <span>Appointments</span>
+              <span>&mdash;</span>
+              <span>Team Management</span>
+              <span>&mdash;</span>
+              <span>Insights</span>
+              <span>&mdash;</span>
               <span>Walk-In Queue</span>
               <span>&mdash;</span>
               <span>Appointments</span>

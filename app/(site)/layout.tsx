@@ -15,8 +15,9 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
             width={32}
             height={32}
             className="rounded-md"
+            style={{ width: "auto", height: 32 }}
           />
-          <span className="font-bold text-xl tracking-[0.25em] uppercase text-[#1a1a1a] group-hover:text-[#ffc81e] transition-colors duration-200">
+          <span className="hidden sm:inline font-bold text-xl tracking-[0.25em] uppercase text-[#1a1a1a] group-hover:text-[#ffc81e] transition-colors duration-200">
             CUKKR
           </span>
         </Link>

@@ -29,7 +29,7 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
             Journal
           </Link>
           <Link
-            href="/get-started"
+            href={process.env.NEXT_PUBLIC_APP_URL || "https://app.cukkr.com"}
             className="px-5 py-2 border border-[#ffc81e] bg-[#ffc81e] text-[#1a1a1a] text-xs font-bold tracking-[0.2em] uppercase hover:bg-transparent hover:text-[#1a1a1a] transition-all duration-200"
           >
             Get Started

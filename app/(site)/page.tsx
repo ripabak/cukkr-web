@@ -55,7 +55,7 @@ export default function Home() {
 
             <div className="flex flex-wrap items-center gap-4 pt-2">
               <Link
-                href="/get-started"
+                href={process.env.NEXT_PUBLIC_APP_URL || "https://app.cukkr.com"}
                 className="px-8 py-4 bg-[#ffc81e] text-[#1a1a1a] text-sm font-black tracking-[0.2em] uppercase hover:bg-[#e6b80b] transition-colors duration-200"
               >
                 Get Started →

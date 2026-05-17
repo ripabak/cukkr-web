@@ -78,7 +78,7 @@ export default async function BarbershopLandingPage({
             className="block w-full py-4 text-center rounded-2xl font-bold text-base transition-all"
             style={{ backgroundColor: '#ffc81e', color: '#1a1a1a' }}
           >
-            Booking Sekarang
+            Book Now
           </Link>
         </div>
       </main>

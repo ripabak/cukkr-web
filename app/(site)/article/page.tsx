@@ -51,7 +51,7 @@ export default async function ArticleListPage({ searchParams }: { searchParams: 
         <div>
           <h1 className="text-5xl md:text-6xl font-bold tracking-tighter uppercase">Articles</h1>
           <p className="text-lg opacity-70 mt-4 max-w-xl">
-            Latest thoughts, research, and technical insights from the FADHR LABS team.
+            Insights, updates, and stories from the team building Cukkr — for barbershop owners and the people behind the chair.
           </p>
         </div>
       </div>

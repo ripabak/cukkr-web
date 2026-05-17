@@ -1,25 +1,25 @@
 import Link from "next/link";
 
-const services = [
+const features = [
   {
     number: "01",
-    title: "Haircut",
-    description: "Precision cuts shaped to your face and lifestyle. Clean lines, no compromise.",
+    title: "Digital Walk-In Queue",
+    description: "Customers check in on arrival, pick their service, and wait their turn — no paper list, no shouted names.",
   },
   {
     number: "02",
-    title: "Beard Grooming",
-    description: "Defined edges, balanced shape. From stubble to full beard — handled with care.",
+    title: "Appointment Booking",
+    description: "Let clients book a slot ahead of time. You control the schedule; they pick what works for them.",
   },
   {
     number: "03",
-    title: "Scalp Treatment",
-    description: "Deep-cleanse ritual for a healthy foundation. Refreshed from root to tip.",
+    title: "Team Management",
+    description: "Add your barbers, assign bookings, and see who's busy — all in one clear view.",
   },
   {
     number: "04",
-    title: "Wax & Polish",
-    description: "Finishing touches that make the difference. Walk out sharper than you walked in.",
+    title: "Business Insights",
+    description: "Revenue, peak hours, top services. The numbers that matter, presented simply.",
   },
 ];
 
@@ -33,47 +33,47 @@ export default function Home() {
             <div className="flex items-center gap-4">
               <span className="w-8 h-[2px] bg-[#ffc81e]" />
               <span className="text-xs font-bold tracking-[0.3em] uppercase text-[#6b7280]">
-                Minimalistic Barbershop
+                Barbershop Management Platform
               </span>
             </div>
 
-            <h1 className="text-[clamp(3.5rem,10vw,8rem)] font-black leading-[0.9] tracking-tight text-[#1a1a1a] uppercase">
-              THE ART
+            <h1 className="text-[clamp(3rem,8vw,7rem)] font-black leading-[0.9] tracking-tight text-[#1a1a1a] uppercase">
+              MANAGE
               <br />
-              OF{" "}
+              YOUR SHOP.
+              <br />
               <span className="relative inline-block">
-                <span className="relative z-10">CLEAN.</span>
+                <span className="relative z-10">SERVE YOUR CLIENTS.</span>
                 <span className="absolute bottom-2 left-0 w-full h-3 bg-[#ffc81e] -z-0" />
               </span>
             </h1>
 
             <p className="max-w-md text-[#6b7280] text-base leading-relaxed">
-              A barbershop built on precision, simplicity, and respect for your time.
-              No distractions — just a sharp cut and an honest experience.
+              Cukkr is the all-in-one platform for modern barbershops — built around the Asia way.
+              Digital walk-in queues, appointment booking, and team management. All in one place.
             </p>
 
             <div className="flex flex-wrap items-center gap-4 pt-2">
               <Link
-                href="/book"
+                href="/get-started"
                 className="px-8 py-4 bg-[#ffc81e] text-[#1a1a1a] text-sm font-black tracking-[0.2em] uppercase hover:bg-[#e6b80b] transition-colors duration-200"
               >
-                Book Appointment →
+                Get Started →
               </Link>
               <Link
                 href="/about"
                 className="px-8 py-4 border border-[#1a1a1a] text-[#1a1a1a] text-sm font-bold tracking-[0.2em] uppercase hover:border-[#ffc81e] hover:text-[#ffc81e] transition-all duration-200"
               >
-                Our Story
+                How It Works
               </Link>
             </div>
           </div>
 
-          {/* Side stat strip */}
           <div className="flex lg:flex-col gap-8 lg:gap-10 lg:pb-4 shrink-0">
             {[
-              { value: "5+", label: "Years of cuts" },
-              { value: "3K+", label: "Happy clients" },
-              { value: "100%", label: "Satisfaction" },
+              { value: "200+", label: "Active Shops" },
+              { value: "10K+", label: "Monthly Bookings" },
+              { value: "4.9★", label: "Average Rating" },
             ].map((stat) => (
               <div key={stat.label} className="flex flex-col gap-1">
                 <span className="text-3xl font-black text-[#1a1a1a] leading-none">{stat.value}</span>
@@ -86,48 +86,45 @@ export default function Home() {
 
       {/* Marquee strip */}
       <div className="bg-[#ffc81e] py-3 overflow-hidden whitespace-nowrap border-b border-[#e6b80b]">
-        <div className="inline-flex gap-16 animate-none text-[#1a1a1a] text-xs font-black tracking-[0.3em] uppercase">
+        <div className="inline-flex gap-16 text-[#1a1a1a] text-xs font-black tracking-[0.3em] uppercase">
           {Array.from({ length: 8 }).map((_, i) => (
             <span key={i} className="inline-flex items-center gap-16">
-              <span>Haircut</span>
+              <span>Walk-In Queue</span>
               <span>&mdash;</span>
-              <span>Beard</span>
+              <span>Appointments</span>
               <span>&mdash;</span>
-              <span>Wax</span>
+              <span>Team Management</span>
               <span>&mdash;</span>
-              <span>Scalp</span>
+              <span>Insights</span>
               <span>&mdash;</span>
             </span>
           ))}
         </div>
       </div>
 
-      {/* Services */}
+      {/* Features */}
       <section className="px-6 lg:px-12 py-20 lg:py-28 border-b border-[#ffc81e]">
         <div className="max-w-6xl mx-auto">
           <div className="flex items-center gap-4 mb-12">
             <span className="w-8 h-[2px] bg-[#ffc81e]" />
-            <span className="text-xs font-bold tracking-[0.3em] uppercase text-[#6b7280]">What We Do</span>
+            <span className="text-xs font-bold tracking-[0.3em] uppercase text-[#6b7280]">Platform Features</span>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-px bg-[#ffc81e]">
-            {services.map((svc) => (
+            {features.map((f) => (
               <div
-                key={svc.number}
+                key={f.number}
                 className="bg-white p-8 flex flex-col gap-6 group hover:bg-[#ffc81e] transition-colors duration-300"
               >
                 <span className="text-xs font-black tracking-[0.3em] text-[#ffc81e] group-hover:text-[#1a1a1a] transition-colors">
-                  {svc.number}
+                  {f.number}
                 </span>
                 <h3 className="text-xl font-black tracking-tight text-[#1a1a1a] uppercase">
-                  {svc.title}
+                  {f.title}
                 </h3>
                 <p className="text-sm text-[#6b7280] leading-relaxed group-hover:text-[#1a1a1a] transition-colors flex-grow">
-                  {svc.description}
+                  {f.description}
                 </p>
-                <span className="text-xs font-bold tracking-[0.2em] uppercase text-[#1a1a1a] group-hover:underline underline-offset-4">
-                  Learn more →
-                </span>
               </div>
             ))}
           </div>
@@ -140,25 +137,26 @@ export default function Home() {
           <div className="flex flex-col gap-6">
             <div className="flex items-center gap-4">
               <span className="w-8 h-[2px] bg-[#ffc81e]" />
-              <span className="text-xs font-bold tracking-[0.3em] uppercase text-[#6b7280]">Our Philosophy</span>
+              <span className="text-xs font-bold tracking-[0.3em] uppercase text-[#6b7280]">Our Approach</span>
             </div>
             <blockquote className="text-4xl lg:text-5xl font-black leading-tight text-[#1a1a1a] tracking-tight">
-              &ldquo;Less noise.
+              &ldquo;Built for the culture.
               <br />
-              More craft.&rdquo;
+              Designed for scale.&rdquo;
             </blockquote>
             <p className="text-[#6b7280] leading-relaxed max-w-md">
-              We strip away everything unnecessary — the gimmicks, the noise, the excess.
-              What remains is pure skill, clean space, and a result you can feel.
+              Asia&rsquo;s barbershops run on trust, loyalty, and precision. Cukkr is built to honor
+              that — giving shop owners the tools to grow without losing the culture that makes
+              their shop worth coming back to.
             </p>
           </div>
 
           <div className="grid grid-cols-2 gap-px bg-[#ffc81e]">
             {[
-              { label: "Walk-in", desc: "No appointment needed. Show up, sit down." },
-              { label: "On-time", desc: "Your time is respected. Always." },
-              { label: "No Upsell", desc: "You get exactly what you asked for." },
-              { label: "Est. 2020", desc: "Four years of sharper cuts." },
+              { label: "Asia-First", desc: "Designed around how Asian barbershops actually operate." },
+              { label: "Walk-In Ready", desc: "Queue management built for the walk-in culture." },
+              { label: "Appointment System", desc: "Let clients book ahead without the back-and-forth." },
+              { label: "No Complexity", desc: "Powerful tools, simple enough for any shop owner." },
             ].map((item) => (
               <div key={item.label} className="bg-white p-6 flex flex-col gap-2">
                 <span className="text-sm font-black tracking-[0.15em] uppercase text-[#1a1a1a]">
@@ -180,21 +178,21 @@ export default function Home() {
               <span className="text-xs font-bold tracking-[0.3em] uppercase text-[#6b7280]">Ready?</span>
             </div>
             <h2 className="text-4xl lg:text-6xl font-black text-[#1a1a1a] tracking-tight uppercase leading-tight">
-              Walk in.
+              Your shop,
               <br />
-              Walk out sharp.
+              fully managed.
             </h2>
           </div>
 
           <div className="flex flex-col gap-4 shrink-0">
             <Link
-              href="/book"
+              href="/get-started"
               className="px-10 py-5 bg-[#ffc81e] text-[#1a1a1a] text-sm font-black tracking-[0.25em] uppercase hover:bg-[#e6b80b] transition-colors duration-200 text-center"
             >
-              Book Appointment →
+              Start Free Trial →
             </Link>
             <p className="text-xs text-[#6b7280] tracking-[0.1em] text-center">
-              Or walk in — we&apos;ll be here.
+              14-day free trial. No credit card required.
             </p>
           </div>
         </div>

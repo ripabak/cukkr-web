@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 
 export default function SiteLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -6,9 +7,18 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
       <header className="flex justify-between items-center px-6 py-5 lg:px-12 border-b border-[#ffc81e]">
         <Link
           href="/"
-          className="font-bold text-xl tracking-[0.25em] uppercase text-[#1a1a1a] hover:text-[#ffc81e] transition-colors duration-200"
+          className="flex items-center gap-2.5 group"
         >
-          CUKKR
+          <Image
+            src="/cukkr-logo-trans.png"
+            alt="Cukkr"
+            width={32}
+            height={32}
+            className="rounded-md"
+          />
+          <span className="font-bold text-xl tracking-[0.25em] uppercase text-[#1a1a1a] group-hover:text-[#ffc81e] transition-colors duration-200">
+            CUKKR
+          </span>
         </Link>
         <nav className="flex items-center gap-6 text-xs font-bold tracking-[0.2em] uppercase">
           <Link href="/about" className="text-[#1a1a1a] hover:text-[#ffc81e] transition-colors duration-200">
@@ -18,10 +28,10 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
             Journal
           </Link>
           <Link
-            href="/book"
+            href="/get-started"
             className="px-5 py-2 border border-[#ffc81e] bg-[#ffc81e] text-[#1a1a1a] text-xs font-bold tracking-[0.2em] uppercase hover:bg-transparent hover:text-[#1a1a1a] transition-all duration-200"
           >
-            Book Now
+            Get Started
           </Link>
         </nav>
       </header>

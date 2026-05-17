@@ -13,8 +13,18 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "CUKKR — Minimalistic Barbershop",
-  description: "A barbershop built on precision, simplicity, and respect for your time.",
+  title: "Cukkr — Barbershop Management Platform",
+  description: "The all-in-one management system for modern barbershops. Digital walk-in queue, appointment booking, team management, and business insights — built around the Asia way.",
+  icons: {
+    icon: [
+      { url: '/favicon.ico' },
+      { url: '/favicon-96x96.png', sizes: '96x96', type: 'image/png' },
+      { url: '/favicon.svg', type: 'image/svg+xml' },
+    ],
+    apple: { url: '/apple-touch-icon.png' },
+    shortcut: '/favicon.ico',
+  },
+  manifest: '/site.webmanifest',
 };
 
 export default function RootLayout({

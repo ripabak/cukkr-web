@@ -69,7 +69,8 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="flex lg:flex-col gap-8 lg:gap-10 lg:pb-4 shrink-0">
+          {/* STATS */}
+          {/* <div className="flex lg:flex-col gap-8 lg:gap-10 lg:pb-4 shrink-0">
             {[
               { value: "200+", label: "Active Shops" },
               { value: "10K+", label: "Monthly Bookings" },
@@ -80,7 +81,7 @@ export default function Home() {
                 <span className="text-xs text-[#6b7280] tracking-[0.15em] uppercase">{stat.label}</span>
               </div>
             ))}
-          </div>
+          </div> */}
         </div>
       </section>
 

@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 
 const features = [
@@ -139,6 +140,125 @@ export default function Home() {
                 </p>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Walk-In QR Experience */}
+      <section className="px-6 lg:px-12 py-20 lg:py-28 bg-[#1a1a1a] border-b border-[#ffc81e]">
+        <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+
+          {/* Image */}
+          <div className="order-2 lg:order-1 flex justify-center lg:justify-start">
+            <div className="relative w-full max-w-sm lg:max-w-none">
+              <Image
+                src="/assets/cukkr-scan-qr.png"
+                alt="Customer scanning QR code to join walk-in queue at barbershop"
+                width={560}
+                height={720}
+                className="w-full object-cover"
+                priority
+              />
+              {/* Present-tense activation badge — "this is happening now" */}
+              <div className="absolute bottom-6 left-6 flex items-center gap-3 bg-[#ffc81e] px-4 py-3">
+                <span className="w-2 h-2 rounded-full bg-[#1a1a1a] animate-pulse shrink-0" />
+                <span className="text-[#1a1a1a] text-xs font-black tracking-[0.2em] uppercase">
+                  Queue Locked
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Copy */}
+          <div className="order-1 lg:order-2 flex flex-col gap-10">
+            <div>
+              {/* Label + social proof anchoring */}
+              <div className="flex items-center gap-4 mb-8">
+                <span className="w-8 h-[2px] bg-[#ffc81e]" />
+                <span className="text-xs font-bold tracking-[0.3em] uppercase text-[#6b7280]">
+                  Walk-In Experience
+                </span>
+                {/* <span className="ml-auto border border-[#ffc81e44] px-3 py-1 text-xs font-black tracking-[0.15em] text-[#ffc81e] shrink-0">
+                  4,832+ booked
+                </span> */}
+              </div>
+
+              {/* Headline — focal anchor on final line */}
+              <h2 className="text-[clamp(3rem,6vw,5.5rem)] font-black leading-[0.95] tracking-tight text-white uppercase">
+                WALK IN.
+                <br />
+                SCAN.
+                <br />
+                <span className="relative inline-block">
+                  <span className="relative z-10 text-[#1a1a1a] px-1">YOU&rsquo;RE IN.</span>
+                  <span className="absolute inset-0 bg-[#ffc81e]" />
+                </span>
+              </h2>
+
+              <p className="text-[#9ca3af] leading-relaxed max-w-md mt-6 text-base">
+                No app download. No receptionist. Just scan the QR at the shop, pick your
+                service, and your spot in the queue is locked — instantly recorded.
+              </p>
+            </div>
+
+            {/* Steps with momentum: connector line + depth watermark */}
+            <div className="flex flex-col">
+              {[
+                {
+                  step: "01",
+                  title: "ARRIVE",
+                  desc: "Walk in. The QR code is right there — on the door, counter, or wall.",
+                },
+                {
+                  step: "02",
+                  title: "SCAN",
+                  desc: "Open your phone camera. One point, one tap.",
+                },
+                {
+                  step: "03",
+                  title: "PICK YOUR CUT",
+                  desc: "Choose your service and preferred barber — takes under 30 seconds.",
+                },
+                {
+                  step: "04",
+                  title: "QUEUE LOCKED",
+                  desc: "Your number is set. Step out, grab a coffee, come back when you're almost up.",
+                },
+              ].map((item, i) => (
+                <div
+                  key={item.step}
+                  className="relative flex items-start gap-6 py-5 border-b border-[#ffffff10] last:border-0 overflow-hidden"
+                >
+                  {/* Watermark number — creates depth, visual interest */}
+                  <span className="absolute right-0 top-1/2 -translate-y-1/2 text-[4.5rem] font-black text-white opacity-[0.04] leading-none select-none pointer-events-none">
+                    {item.step}
+                  </span>
+                  {/* Vertical connector dot — Gestalt continuity */}
+                  <div className="relative flex flex-col items-center shrink-0 pt-0.5">
+                    <span className="text-xs font-black tracking-[0.3em] text-[#ffc81e]">
+                      {item.step}
+                    </span>
+                    {i < 3 && (
+                      <span className="mt-2 w-[1px] h-6 bg-gradient-to-b from-[#ffc81e] to-transparent opacity-40" />
+                    )}
+                  </div>
+                  <div>
+                    <span className="block text-xs font-black tracking-[0.2em] uppercase text-white mb-1">
+                      {item.title}
+                    </span>
+                    <span className="text-sm text-[#6b7280] leading-relaxed">{item.desc}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Ghost CTA — conversion moment on dark section */}
+            <Link
+              href={process.env.NEXT_PUBLIC_APP_URL || "https://app.cukkr.com"}
+              className="self-start px-8 py-4 border border-[#ffc81e] text-[#ffc81e] text-xs font-black tracking-[0.25em] uppercase hover:bg-[#ffc81e] hover:text-[#1a1a1a] transition-all duration-200"
+            >
+              Set Up Walk-In for Your Shop →
+            </Link>
           </div>
         </div>
       </section>

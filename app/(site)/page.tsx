@@ -144,6 +144,105 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Exclusive Booking Link */}
+      <section className="px-6 lg:px-12 py-20 lg:py-28 border-b border-[#ffc81e]">
+        <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+
+          {/* Copy */}
+          <div className="flex flex-col gap-10">
+            <div>
+              <div className="flex items-center gap-4 mb-8">
+                <span className="w-8 h-[2px] bg-[#ffc81e]" />
+                <span className="text-xs font-bold tracking-[0.3em] uppercase text-[#6b7280]">
+                  Your Booking Page
+                </span>
+              </div>
+              <h2 className="text-[clamp(2.5rem,5.5vw,5rem)] font-black leading-[0.9] tracking-tight text-[#1a1a1a] uppercase">
+                YOUR SHOP.
+                <br />
+                YOUR LINK.
+                <br />
+                <span className="relative inline-block">
+                  <span className="relative z-10">EVERYWHERE.</span>
+                  <span className="absolute bottom-2 left-0 w-full h-3 bg-[#ffc81e] -z-0" />
+                </span>
+              </h2>
+              <p className="text-[#6b7280] leading-relaxed max-w-md mt-6">
+                Every barbershop on Cukkr gets its own exclusive URL — like your Instagram
+                username, but for bookings. Drop it anywhere and customers land directly
+                on your booking page.
+              </p>
+            </div>
+
+            {/* URL showcase */}
+            <div>
+              <span className="text-xs font-bold tracking-[0.3em] uppercase text-[#6b7280] block mb-3">
+                Your link looks like this
+              </span>
+              <div className="flex items-stretch border border-[#1a1a1a] overflow-hidden">
+                <span className="px-4 py-4 text-sm font-mono font-bold text-[#9ca3af] bg-[#f9fafb] border-r border-[#e5e7eb] shrink-0">
+                  cukkr.com/
+                </span>
+                <span className="px-4 py-4 text-sm font-mono font-black text-[#1a1a1a] bg-[#ffc81e] flex-1 tracking-wide">
+                  your-barbershop
+                </span>
+              </div>
+            </div>
+
+            {/* 3 benefit bullets */}
+            <div className="flex flex-col gap-5">
+              {[
+                {
+                  title: "Bio link that books",
+                  desc: "Paste it in your Instagram bio. Customers tap once — they're on your booking page.",
+                },
+                {
+                  title: "Share anywhere",
+                  desc: "WhatsApp, Stories, printed on your business card. One URL does it all.",
+                },
+                {
+                  title: "Exclusively yours",
+                  desc: "No one else has this address. It's your shop's identity on the internet.",
+                },
+              ].map((b) => (
+                <div key={b.title} className="flex items-start gap-4">
+                  <span className="w-5 h-[2px] bg-[#ffc81e] shrink-0 mt-2.5" />
+                  <div>
+                    <span className="block text-xs font-black tracking-[0.15em] uppercase text-[#1a1a1a] mb-1">
+                      {b.title}
+                    </span>
+                    <span className="text-sm text-[#6b7280] leading-relaxed">{b.desc}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Instagram screenshot — editorial offset shadow */}
+          <div className="flex justify-center lg:justify-end">
+            <div className="relative w-full max-w-xs lg:max-w-sm">
+              <div className="absolute inset-0 translate-x-4 translate-y-4 bg-[#ffc81e]" />
+              <div className="relative bg-white border border-[#1a1a1a]">
+                <Image
+                  src="/assets/cukkr-web-link-book.png"
+                  alt="Cukkr barbershop Instagram profile with exclusive booking link in bio"
+                  width={480}
+                  height={260}
+                  className="w-full object-cover block"
+                />
+                <div className="px-4 py-3 border-t border-[#e5e7eb] flex items-center gap-3">
+                  <span className="w-4 h-[1px] bg-[#ffc81e]" />
+                  <span className="text-xs font-bold tracking-[0.2em] uppercase text-[#6b7280]">
+                    link in bio → your booking page
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
       {/* Walk-In QR Experience */}
       <section className="px-6 lg:px-12 py-20 lg:py-28 bg-[#1a1a1a] border-b border-[#ffc81e]">
         <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">

@@ -115,6 +115,7 @@ export function AppointmentBooking({ slug, formData }: Props) {
       router.push(`/${slug}/booking`);
     } else {
       setStep(ORDERED[idx - 1]);
+      window.scrollTo(0, 0);
     }
   };
 
@@ -123,11 +124,13 @@ export function AppointmentBooking({ slug, formData }: Props) {
     const iso = new Date(`${dateValue}T${timeValue}`).toISOString();
     setScheduledAt(iso, formatDisplayDateTime(dateValue, timeValue));
     setStep('identity');
+    window.scrollTo(0, 0);
   };
 
   const handleIdentityNext = () => {
     if (!state.identity.name.trim()) return;
     setStep('recap');
+    window.scrollTo(0, 0);
   };
 
   const handleSubmit = () => {

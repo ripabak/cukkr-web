@@ -420,10 +420,10 @@ export default function Home() {
               href="/get-started"
               className="px-10 py-5 bg-[#ffc81e] text-[#1a1a1a] text-sm font-black tracking-[0.25em] uppercase hover:bg-[#e6b80b] transition-colors duration-200 text-center"
             >
-              Start Free Trial →
+              Get Started Now
             </Link>
             <p className="text-xs text-[#6b7280] tracking-[0.1em] text-center">
-              14-day free trial. No credit card required.
+              Login and manage your shop effortlessly.
             </p>
           </div>
         </div>

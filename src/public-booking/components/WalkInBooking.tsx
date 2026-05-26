@@ -61,6 +61,7 @@ export function WalkInBooking({ slug, formData }: Props) {
       router.push(`/${slug}/booking`);
     } else {
       setStep(ORDERED[idx - 1]);
+      window.scrollTo(0, 0);
     }
   };
 
@@ -72,6 +73,7 @@ export function WalkInBooking({ slug, formData }: Props) {
         const result = await validatePin(slug, state.pin);
         setValidationToken(result.validationToken);
         setStep('details');
+        window.scrollTo(0, 0);
       } catch (err: any) {
         setPinError(err.message || 'Invalid PIN. Please try again.');
       }
@@ -81,11 +83,13 @@ export function WalkInBooking({ slug, formData }: Props) {
   const handleDetailsNext = () => {
     if (state.serviceIds.length === 0) return;
     setStep('identity');
+    window.scrollTo(0, 0);
   };
 
   const handleIdentityNext = () => {
     if (!state.identity.name.trim()) return;
     setStep('recap');
+    window.scrollTo(0, 0);
   };
 
   const handleSubmit = () => {

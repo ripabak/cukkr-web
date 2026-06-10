@@ -45,7 +45,7 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
         </p>
         <div className="flex gap-6 text-xs font-medium tracking-[0.15em] uppercase text-[#6b7280]">
           <Link href="#" className="hover:text-[#ffc81e] transition-colors">Terms</Link>
-          <Link href="#" className="hover:text-[#ffc81e] transition-colors">Privacy</Link>
+          <Link href="/privacy" className="hover:text-[#ffc81e] transition-colors">Privacy</Link>
           <a
             href="https://instagram.com"
             target="_blank"

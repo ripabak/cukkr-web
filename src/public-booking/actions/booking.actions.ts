@@ -74,7 +74,7 @@ export async function createWalkIn(
   payload: {
     validationToken: string;
     customerName: string;
-    customerPhone: string | null;
+    customerEmail: string | null;
     serviceIds: string[];
     barberId: string | null;
     notes: string | null;
@@ -91,7 +91,7 @@ export async function createAppointment(
   slug: string,
   payload: {
     customerName: string;
-    customerPhone: string | null;
+    customerEmail: string;
     serviceIds: string[];
     barberId: string | null;
     scheduledAt: string;
@@ -103,4 +103,17 @@ export async function createAppointment(
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload),
   });
+}
+
+export async function verifyAppointment(
+  slug: string,
+  token: string,
+): Promise<{
+  verified: boolean;
+  bookingId: string | null;
+  status: 'verified' | 'already_verified' | 'invalid';
+}> {
+  return apiFetch(
+    `/api/public/booking/${slug}/appointment/verify?token=${token}`,
+  );
 }

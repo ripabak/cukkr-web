@@ -9,7 +9,7 @@ export interface PublicSelectedService {
 
 export interface PublicIdentity {
   name: string;
-  phone: string;
+  email: string;
 }
 
 export interface PublicBookingState {
@@ -40,7 +40,7 @@ interface PublicBookingContextType {
 const defaultState: PublicBookingState = {
   pin: '',
   validationToken: null,
-  identity: { name: '', phone: '' },
+  identity: { name: '', email: '' },
   serviceIds: [],
   selectedServices: [],
   barberId: null,

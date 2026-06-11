@@ -7,6 +7,7 @@ import { validatePin, createWalkIn } from '@/src/public-booking/actions/booking.
 import type { PublicFormData } from '@/src/public-booking/actions/booking.actions';
 import { BookingHeader } from '@/src/public-booking/components/BookingHeader';
 import { PinInput } from '@/src/public-booking/components/PinInput';
+import { PublicIdentityForm } from '@/src/public-booking/components/PublicIdentityForm';
 import { ServiceSelector } from '@/src/public-booking/components/ServiceSelector';
 import { BarberSelector } from '@/src/public-booking/components/BarberSelector';
 
@@ -100,7 +101,7 @@ export function WalkInBooking({ slug, formData }: Props) {
         await createWalkIn(slug, {
           validationToken: state.validationToken!,
           customerName: state.identity.name.trim(),
-          customerPhone: state.identity.phone?.trim() || null,
+          customerEmail: state.identity.email?.trim() || null,
           serviceIds: state.serviceIds,
           barberId: state.barberId,
           notes: state.notes?.trim() || null,
@@ -132,10 +133,10 @@ export function WalkInBooking({ slug, formData }: Props) {
               <span className="text-[#6b7280]">Name</span>
               <span className="font-medium text-[#1a1a1a]">{state.identity.name}</span>
             </div>
-            {state.identity.phone && (
+            {state.identity.email && (
               <div className="flex justify-between text-sm mb-2">
-                <span className="text-[#6b7280]">Phone</span>
-                <span className="font-medium text-[#1a1a1a]">{state.identity.phone}</span>
+                <span className="text-[#6b7280]">Email</span>
+                <span className="font-medium text-[#1a1a1a]">{state.identity.email}</span>
               </div>
             )}
             {state.barberName && (
@@ -241,39 +242,14 @@ export function WalkInBooking({ slug, formData }: Props) {
         )}
 
         {step === 'identity' && (
-          <div className="flex flex-col gap-5">
-            <div>
-              <label className="block text-sm font-medium mb-1.5 text-[#1a1a1a]">
-                Full Name <span className="text-[#ef4444]">*</span>
-              </label>
-              <input
-                type="text"
-                placeholder="e.g. Ahmad Fauzi"
-                value={state.identity.name}
-                onChange={e => updateIdentity({ name: e.target.value })}
-                className="w-full px-4 py-3 rounded-xl text-sm outline-none transition-all border-2 border-[#ebebeb] text-[#1a1a1a] bg-white focus:border-[#ffc81e]"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium mb-1.5 text-[#1a1a1a]">
-                Phone Number <span className="text-xs font-normal text-[#9ca3af]">(optional)</span>
-              </label>
-              <input
-                type="tel"
-                placeholder="e.g. 081234567890"
-                value={state.identity.phone}
-                onChange={e => updateIdentity({ phone: e.target.value })}
-                className="w-full px-4 py-3 rounded-xl text-sm outline-none transition-all border-2 border-[#ebebeb] text-[#1a1a1a] bg-white focus:border-[#ffc81e]"
-              />
-            </div>
-            <button
-              onClick={handleIdentityNext}
-              disabled={!state.identity.name.trim()}
-              className="w-full py-4 rounded-2xl font-black text-base mt-2 transition-opacity bg-[#ffc81e] text-[#1a1a1a] disabled:opacity-40"
-            >
-              Continue
-            </button>
-          </div>
+          <PublicIdentityForm
+            name={state.identity.name}
+            email={state.identity.email}
+            emailRequired={false}
+            onNameChange={value => updateIdentity({ name: value })}
+            onEmailChange={value => updateIdentity({ email: value })}
+            onContinue={handleIdentityNext}
+          />
         )}
 
         {step === 'recap' && (
@@ -322,10 +298,10 @@ export function WalkInBooking({ slug, formData }: Props) {
                 <span className="text-[#6b7280]">Name</span>
                 <span className="font-medium text-[#1a1a1a]">{state.identity.name}</span>
               </div>
-              {state.identity.phone && (
+              {state.identity.email && (
                 <div className="flex justify-between text-sm">
-                  <span className="text-[#6b7280]">Phone</span>
-                  <span className="font-medium text-[#1a1a1a]">{state.identity.phone}</span>
+                  <span className="text-[#6b7280]">Email</span>
+                  <span className="font-medium text-[#1a1a1a]">{state.identity.email}</span>
                 </div>
               )}
             </div>

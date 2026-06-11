@@ -10,6 +10,7 @@ import {
 } from '@/src/public-booking/actions/booking.actions';
 import type { PublicFormData } from '@/src/public-booking/actions/booking.actions';
 import { BookingHeader } from '@/src/public-booking/components/BookingHeader';
+import { PublicIdentityForm } from '@/src/public-booking/components/PublicIdentityForm';
 import { ServiceSelector } from '@/src/public-booking/components/ServiceSelector';
 import { BarberSelector } from '@/src/public-booking/components/BarberSelector';
 
@@ -128,7 +129,6 @@ export function AppointmentBooking({ slug, formData }: Props) {
   };
 
   const handleIdentityNext = () => {
-    if (!state.identity.name.trim()) return;
     setStep('recap');
     window.scrollTo(0, 0);
   };
@@ -140,7 +140,7 @@ export function AppointmentBooking({ slug, formData }: Props) {
       try {
         await createAppointment(slug, {
           customerName: state.identity.name.trim(),
-          customerPhone: state.identity.phone?.trim() || null,
+          customerEmail: state.identity.email.trim(),
           serviceIds: state.serviceIds,
           barberId: state.barberId,
           scheduledAt: state.scheduledAt!,
@@ -166,7 +166,7 @@ export function AppointmentBooking({ slug, formData }: Props) {
           </div>
           <h1 className="text-2xl font-black mb-2 text-[#1a1a1a]">Appointment Submitted!</h1>
           <p className="text-sm mb-8 text-[#6b7280]">
-            Your barber will confirm the slot. Check back soon.
+            Check your email to confirm your appointment. Your booking will only be processed after verification.
           </p>
           <div className="rounded-2xl p-4 mb-8 text-left bg-[#f9f9f9]">
             <div className="flex justify-between text-sm mb-2">
@@ -319,39 +319,14 @@ export function AppointmentBooking({ slug, formData }: Props) {
         )}
 
         {step === 'identity' && (
-          <div className="flex flex-col gap-5">
-            <div>
-              <label className="block text-sm font-medium mb-1.5 text-[#1a1a1a]">
-                Full Name <span className="text-[#ef4444]">*</span>
-              </label>
-              <input
-                type="text"
-                placeholder="e.g. Ahmad Fauzi"
-                value={state.identity.name}
-                onChange={e => updateIdentity({ name: e.target.value })}
-                className="w-full px-4 py-3 rounded-xl text-sm outline-none transition-all border-2 border-[#ebebeb] text-[#1a1a1a] bg-white focus:border-[#ffc81e]"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium mb-1.5 text-[#1a1a1a]">
-                Phone Number <span className="text-xs font-normal text-[#9ca3af]">(optional)</span>
-              </label>
-              <input
-                type="tel"
-                placeholder="e.g. 081234567890"
-                value={state.identity.phone}
-                onChange={e => updateIdentity({ phone: e.target.value })}
-                className="w-full px-4 py-3 rounded-xl text-sm outline-none transition-all border-2 border-[#ebebeb] text-[#1a1a1a] bg-white focus:border-[#ffc81e]"
-              />
-            </div>
-            <button
-              onClick={handleIdentityNext}
-              disabled={!state.identity.name.trim()}
-              className="w-full py-4 rounded-2xl font-black text-base mt-2 transition-opacity bg-[#ffc81e] text-[#1a1a1a] disabled:opacity-40"
-            >
-              Continue
-            </button>
-          </div>
+          <PublicIdentityForm
+            name={state.identity.name}
+            email={state.identity.email}
+            emailRequired
+            onNameChange={value => updateIdentity({ name: value })}
+            onEmailChange={value => updateIdentity({ email: value })}
+            onContinue={handleIdentityNext}
+          />
         )}
 
         {step === 'recap' && (
@@ -408,10 +383,10 @@ export function AppointmentBooking({ slug, formData }: Props) {
                 <span className="text-[#6b7280]">Name</span>
                 <span className="font-medium text-[#1a1a1a]">{state.identity.name}</span>
               </div>
-              {state.identity.phone && (
+              {state.identity.email && (
                 <div className="flex justify-between text-sm">
-                  <span className="text-[#6b7280]">Phone</span>
-                  <span className="font-medium text-[#1a1a1a]">{state.identity.phone}</span>
+                  <span className="text-[#6b7280]">Email</span>
+                  <span className="font-medium text-[#1a1a1a]">{state.identity.email}</span>
                 </div>
               )}
             </div>

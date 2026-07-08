@@ -117,3 +117,16 @@ export async function verifyAppointment(
     `/api/public/booking/${slug}/appointment/verify?token=${token}`,
   );
 }
+
+export async function verifyIdentity(
+  slug: string,
+  token: string,
+): Promise<{
+  verified: boolean;
+  bookingId: null;
+  status: 'verified' | 'already_verified' | 'invalid';
+}> {
+  return apiFetch(
+    `/api/public/booking/${slug}/identity/verify?token=${token}`,
+  );
+}

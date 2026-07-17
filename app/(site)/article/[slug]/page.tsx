@@ -24,8 +24,17 @@ async function getArticle(slug: string) {
   }
 }
 
-// Enhanced block renderer
-function BlockRenderer({ blocks }: { blocks: any[] }) {
+interface ArticleBlock {
+  __component: string;
+  body?: string;
+  title?: string;
+  author?: string;
+  file?: { url?: string; alternativeText?: string; caption?: string };
+  media?: { url?: string; alternativeText?: string; caption?: string };
+  files?: Array<{ url?: string; alternativeText?: string; caption?: string }>;
+}
+
+function BlockRenderer({ blocks }: { blocks: ArticleBlock[] }) {
   if (!blocks || blocks.length === 0) return null;
 
   return (
@@ -35,7 +44,7 @@ function BlockRenderer({ blocks }: { blocks: any[] }) {
           return (
             <div
               key={index}
-              className="font-[Charter] prose prose-invert max-w-none prose-lg prose-headings:font-bold prose-a:text-accent hover:prose-a:text-white prose-a:transition-colors prose-blockquote:border-accent prose-blockquote:bg-white/[0.02] prose-blockquote:px-6 prose-blockquote:py-2 prose-blockquote:rounded-r-lg"
+              className="font-[family-name:var(--font-serif)] prose prose-lg max-w-none prose-headings:font-semibold prose-headings:text-[var(--ink)] prose-p:text-[var(--ink-soft)] prose-a:text-[var(--accent-dark)] hover:prose-a:text-[var(--ink)] prose-a:transition-colors prose-strong:text-[var(--ink)] prose-blockquote:border-l-2 prose-blockquote:border-[var(--accent)] prose-blockquote:bg-[var(--cream)] prose-blockquote:px-6 prose-blockquote:py-4 prose-blockquote:rounded-r-xl"
             >
               <Markdown remarkPlugins={[remarkGfm]}>{block.body}</Markdown>
             </div>
@@ -43,16 +52,16 @@ function BlockRenderer({ blocks }: { blocks: any[] }) {
         }
         if (block.__component === 'shared.quote') {
           return (
-            <blockquote key={index} className="my-16 p-8 md:p-12 border-l-4 border-accent bg-white/[0.02] rounded-r-2xl relative">
-              <span className="absolute top-4 left-4 text-7xl text-accent opacity-20 font-serif leading-none">"</span>
+            <blockquote key={index} className="my-16 p-8 md:p-12 border-l-2 border-[var(--accent)] bg-[var(--cream)] rounded-r-2xl relative">
+              <span className="absolute top-4 left-4 text-7xl text-[var(--accent)] opacity-30 font-[family-name:var(--font-serif)] leading-none" aria-hidden="true">&ldquo;</span>
               <div className="relative z-10">
-                <p className="text-2xl md:text-3xl lg:text-4xl font-medium leading-relaxed mb-8 italic text-neutral-200">
+                <p className="text-2xl md:text-3xl lg:text-4xl font-medium leading-relaxed mb-8 italic text-[var(--ink)]">
                   {block.body}
                 </p>
                 {(block.title || block.author) && (
                   <footer className="flex items-center gap-4">
-                    <div className="h-[2px] w-12 bg-accent"></div>
-                    <cite className="not-italic text-lg md:text-xl font-bold text-neutral-400">
+                    <div className="h-[2px] w-12 bg-[var(--accent)]" />
+                    <cite className="not-italic text-lg md:text-xl font-semibold text-[var(--ink-soft)]">
                       {block.title || block.author}
                     </cite>
                   </footer>
@@ -67,8 +76,9 @@ function BlockRenderer({ blocks }: { blocks: any[] }) {
           const url = file.url?.startsWith('http') ? file.url : `${process.env.NEXT_PUBLIC_STRAPI_URL || process.env.STRAPI_URL || 'http://localhost:1337'}${file.url}`;
           return (
             <figure key={index} className="my-16">
-              <img src={url} alt={file.alternativeText || ''} className="w-full rounded-2xl shadow-2xl" />
-              {file.caption && <figcaption className="mt-4 text-center text-sm text-neutral-500 italic">{file.caption}</figcaption>}
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={url} alt={file.alternativeText || ''} className="w-full rounded-2xl shadow-[var(--shadow-md)]" />
+              {file.caption && <figcaption className="mt-4 text-center text-sm text-[var(--ink-muted)] italic">{file.caption}</figcaption>}
             </figure>
           );
         }
@@ -77,19 +87,20 @@ function BlockRenderer({ blocks }: { blocks: any[] }) {
           if (!files.length) return null;
           return (
             <div key={index} className="my-16">
-              <div className="flex items-center gap-2 mb-4 px-6 md:px-0 text-sm font-bold uppercase tracking-widest text-neutral-500">
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <div className="flex items-center gap-2 mb-4 px-6 md:px-0 text-sm font-semibold uppercase tracking-widest text-[var(--ink-muted)]">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
                 </svg>
                 <span>Swipe to explore</span>
               </div>
-              <div className="flex gap-4 overflow-x-auto snap-x snap-mandatory pb-6 custom-scrollbar -mx-6 px-6 md:mx-0 md:px-0">
-                {files.map((file: any, i: number) => {
+              <div className="flex gap-4 overflow-x-auto snap-x snap-mandatory pb-6 -mx-6 px-6 md:mx-0 md:px-0">
+                {files.map((file: { url?: string; alternativeText?: string; caption?: string }, i: number) => {
                   const url = file.url?.startsWith('http') ? file.url : `${process.env.NEXT_PUBLIC_STRAPI_URL || process.env.STRAPI_URL || 'http://localhost:1337'}${file.url}`;
                   return (
                     <div key={i} className="w-full min-w-full shrink-0 snap-center">
-                      <img src={url} alt={file.alternativeText || `Slider image ${i + 1}`} className="w-full h-auto rounded-2xl shadow-xl object-cover bg-neutral-900" />
-                      {file.caption && <p className="mt-4 text-center text-sm text-neutral-500 italic">{file.caption}</p>}
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={url} alt={file.alternativeText || `Slider image ${i + 1}`} className="w-full h-auto rounded-2xl shadow-[var(--shadow-md)] object-cover bg-[var(--border-soft)]" />
+                      {file.caption && <p className="mt-4 text-center text-sm text-[var(--ink-muted)] italic">{file.caption}</p>}
                     </div>
                   );
                 })}
@@ -97,7 +108,6 @@ function BlockRenderer({ blocks }: { blocks: any[] }) {
             </div>
           )
         }
-        // Fallback for unknown blocks
         return null;
       })}
     </>
@@ -122,36 +132,35 @@ export default async function ArticleDetailPage({ params }: { params: Promise<{ 
   });
 
   return (
-    <article className="flex flex-col w-full max-w-[800px] mx-auto p-6 lg:p-12 gap-12 mt-8 min-h-screen">
+    <article className="flex flex-col w-full max-w-[800px] mx-auto px-6 lg:px-8 gap-12 mt-8 min-h-[60vh] pb-24">
       {/* Back link */}
       <div>
-        <Link href="/article" className="text-sm font-bold uppercase tracking-widest text-neutral-500 hover:text-accent transition-colors flex items-center gap-2">
-          &larr; Back to Articles
+        <Link href="/article" className="inline-flex items-center gap-2 text-sm font-semibold text-[var(--ink-muted)] hover:text-[var(--ink)] transition-colors pressable">
+          <span aria-hidden="true">←</span> Back to articles
         </Link>
       </div>
 
       {/* Article Header */}
-      <header className="flex flex-col gap-8 mb-4">
-        <div className="flex items-center gap-4 text-sm font-mono text-neutral-400">
-          <span>{formattedDate}</span>
+      <header className="flex flex-col gap-6 mb-4">
+        <div className="flex items-center gap-3 text-sm font-mono text-[var(--ink-muted)]">
+          <span className="tabular-nums">{formattedDate}</span>
           <span>•</span>
-          <span className="text-accent uppercase tracking-widest font-bold px-3 py-1 border border-accent/30 rounded-full">
+          <span className="text-xs font-semibold uppercase tracking-wider text-[var(--accent-dark)] bg-[var(--gold-surface)] px-2 py-1 rounded">
             {category?.name || category?.title || 'Uncategorized'}
           </span>
         </div>
-        <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight leading-tight">
+        <h1 className="font-[family-name:var(--font-serif)] text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight leading-tight text-[var(--ink)] text-balance">
           {title}
         </h1>
 
-        {/* Author info */}
         {article.author && (
-          <div className="flex items-center gap-4 mt-4 pt-8 border-t border-white/10">
-            <div className="w-14 h-14 rounded-full bg-accent text-black flex items-center justify-center text-2xl font-bold shadow-lg">
+          <div className="flex items-center gap-4 mt-4 pt-8 border-t border-[var(--border)]">
+            <div className="w-14 h-14 rounded-xl bg-[var(--accent)] text-[var(--ink)] flex items-center justify-center text-2xl font-bold">
               {article.author.name?.[0] || 'A'}
             </div>
             <div className="flex flex-col">
-              <span className="text-xl font-bold text-white">{article.author.name}</span>
-              {article.author.email && <span className="text-sm text-neutral-400">{article.author.email}</span>}
+              <span className="text-lg font-semibold text-[var(--ink)]">{article.author.name}</span>
+              {article.author.email && <span className="text-sm text-[var(--ink-muted)]">{article.author.email}</span>}
             </div>
           </div>
         )}
@@ -159,7 +168,8 @@ export default async function ArticleDetailPage({ params }: { params: Promise<{ 
 
       {/* Cover Image */}
       {article.cover && (
-        <figure className="mb-12 mt-4 rounded-3xl overflow-hidden shadow-2xl relative aspect-[21/9]">
+        <figure className="mb-12 mt-4 rounded-3xl overflow-hidden shadow-[var(--shadow-lg)] relative aspect-[21/9]">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={article.cover.url?.startsWith('http') ? article.cover.url : `${process.env.NEXT_PUBLIC_STRAPI_URL || process.env.STRAPI_URL || 'http://localhost:1337'}${article.cover.url}`}
             alt={article.cover.alternativeText || title}
@@ -169,24 +179,22 @@ export default async function ArticleDetailPage({ params }: { params: Promise<{ 
       )}
 
       {/* Article Content */}
-      <div
-        className="text-lg leading-relaxed space-y-6"
-      >
+      <div className="text-lg leading-relaxed space-y-6">
         {blocks ? (
           <BlockRenderer blocks={blocks} />
         ) : (
-          <p className="opacity-70 italic">Content is missing.</p>
+          <p className="text-[var(--ink-muted)] italic">Content is missing.</p>
         )}
       </div>
 
       {/* Footer / Share */}
-      <footer className="mt-12 pt-8 border-t border-border flex justify-between items-center">
+      <footer className="mt-12 pt-8 border-t border-[var(--border)] flex justify-between items-center">
         <div className="flex gap-4">
-          <button className="text-sm font-bold uppercase tracking-widest text-neutral-400 hover:text-white transition-colors">
+          <button className="text-sm font-semibold text-[var(--ink-muted)] hover:text-[var(--ink)] transition-colors">
             Share on X
           </button>
-          <button className="text-sm font-bold uppercase tracking-widest text-neutral-400 hover:text-white transition-colors">
-            Copy Link
+          <button className="text-sm font-semibold text-[var(--ink-muted)] hover:text-[var(--ink)] transition-colors">
+            Copy link
           </button>
         </div>
       </footer>

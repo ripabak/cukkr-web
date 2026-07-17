@@ -13,7 +13,7 @@ async function getCategories() {
 
 async function getArticles(page: number, category?: string) {
   try {
-    const filters: any = {};
+    const filters: Record<string, unknown> = {};
     if (category) {
       filters.category = { slug: { $eq: category } };
     }
@@ -24,7 +24,7 @@ async function getArticles(page: number, category?: string) {
       filters,
       pagination: {
         page,
-        pageSize: 10, // Adjust as needed
+        pageSize: 10,
       }
     });
     return { data: res.data || [], meta: res.meta };
@@ -38,44 +38,62 @@ export default async function ArticleListPage({ searchParams }: { searchParams: 
   const resolvedSearchParams = await searchParams;
   const currentPage = Number(resolvedSearchParams.page) || 1;
   const currentCategory = resolvedSearchParams.category;
-  
+
   const [{ data: articles, meta }, categories] = await Promise.all([
     getArticles(currentPage, currentCategory),
     getCategories()
   ]);
 
   return (
-    <div className="flex flex-col w-full max-w-[1200px] mx-auto p-6 lg:p-12 gap-12">
+    <div className="flex flex-col w-full max-w-[1200px] mx-auto px-6 lg:px-8 py-12 lg:py-16 gap-12 min-h-[60vh]">
       {/* Header */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 border-b border-border pb-8">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 border-b border-[var(--border)] pb-8">
         <div>
-          <h1 className="text-5xl md:text-6xl font-bold tracking-tighter uppercase">Articles</h1>
-          <p className="text-lg opacity-70 mt-4 max-w-xl">
+          <div className="flex items-start gap-3 mb-4">
+            <span className="w-6 h-[2px] bg-[var(--accent)] mt-2.5" />
+            <span className="text-xs font-semibold tracking-widest uppercase text-[var(--ink-muted)]">
+              Journal
+            </span>
+          </div>
+          <h1 className="font-[family-name:var(--font-serif)] text-5xl md:text-6xl font-bold tracking-tight text-[var(--ink)] leading-[1] text-balance">
+            Articles
+          </h1>
+          <p className="text-lg text-[var(--ink-soft)] mt-4 max-w-xl leading-relaxed text-balance">
             Insights, updates, and stories from the team building Cukkr — for barbershop owners and the people behind the chair.
           </p>
         </div>
       </div>
 
-      {/* Main Content: Sidebar (Filters) + List */}
+      {/* Main Content */}
       <div className="flex flex-col md:flex-row gap-12">
-        {/* Filters Sidebar */}
-        <aside className="w-full md:w-48 shrink-0 flex flex-col gap-8">
+        {/* Sidebar */}
+        <aside className="w-full md:w-52 shrink-0 flex flex-col gap-8">
           <div>
-            <h3 className="text-sm font-bold uppercase tracking-widest text-neutral-500 mb-4">Categories</h3>
-            <ul className="flex flex-col gap-3 max-h-64 overflow-y-auto pr-2 custom-scrollbar">
+            <h2 className="text-xs font-semibold uppercase tracking-widest text-[var(--ink-muted)] mb-4">
+              Categories
+            </h2>
+            <ul className="flex flex-col gap-2">
               <li>
-                <Link 
-                  href="/article" 
-                  className={`${!currentCategory ? 'text-accent font-bold' : 'text-neutral-400 hover:text-white'} transition-colors block`}
+                <Link
+                  href="/article"
+                  className={`block text-sm font-medium transition-colors rounded-md px-3 py-2 ${
+                    !currentCategory
+                      ? 'bg-[var(--border-soft)] text-[var(--ink)]'
+                      : 'text-[var(--ink-soft)] hover:bg-[var(--border-soft)] hover:text-[var(--ink)]'
+                  }`}
                 >
-                  All Categories
+                  All categories
                 </Link>
               </li>
-              {categories.map((cat: any) => (
+              {categories.map((cat: { documentId?: string; id?: string; slug?: string; name?: string; title?: string }) => (
                 <li key={cat.documentId || cat.id}>
-                  <Link 
+                  <Link
                     href={`/article?category=${cat.slug}`}
-                    className={`${currentCategory === cat.slug ? 'text-accent font-bold' : 'text-neutral-400 hover:text-white'} transition-colors block truncate`}
+                    className={`block text-sm font-medium transition-colors rounded-md px-3 py-2 truncate ${
+                      currentCategory === cat.slug
+                        ? 'bg-[var(--border-soft)] text-[var(--ink)]'
+                        : 'text-[var(--ink-soft)] hover:bg-[var(--border-soft)] hover:text-[var(--ink)]'
+                    }`}
                     title={cat.name || cat.title}
                   >
                     {cat.name || cat.title}
@@ -84,24 +102,29 @@ export default async function ArticleListPage({ searchParams }: { searchParams: 
               ))}
             </ul>
           </div>
-          <div>
-            <h3 className="text-sm font-bold uppercase tracking-widest text-neutral-500 mb-4">Sort By</h3>
-            <select className="w-full bg-neutral-900 border border-neutral-800 text-white p-2 rounded-md focus:outline-none focus:border-accent">
-              <option>Newest First</option>
-              <option>Oldest First</option>
-            </select>
-          </div>
         </aside>
 
         {/* Article List */}
         <div className="flex-grow flex flex-col gap-0">
           {articles.length === 0 ? (
-            <div className="py-8 text-neutral-400">No articles found.</div>
+            <div className="py-16 px-6 text-center border border-dashed border-[var(--border)] rounded-2xl bg-[var(--cream)]">
+              <p className="text-[var(--ink-muted)] font-medium">No articles found.</p>
+              <p className="text-sm text-[var(--ink-muted)] mt-1">Check back soon for new stories.</p>
+            </div>
           ) : (
-            articles.map((article: any) => {
+            articles.map((article: {
+              documentId?: string;
+              id?: string;
+              title: string;
+              description?: string;
+              slug: string;
+              publishedAt?: string;
+              createdAt?: string;
+              category?: { name?: string; title?: string };
+              author?: { name?: string; email?: string };
+            }) => {
               const { title, description, slug, publishedAt, category, createdAt } = article;
-              
-              const dateObj = new Date(publishedAt || createdAt);
+              const dateObj = new Date(publishedAt || createdAt || '1970-01-01T00:00:00Z');
               const formattedDate = dateObj.toLocaleDateString('en-US', {
                 month: 'short',
                 day: 'numeric',
@@ -109,66 +132,76 @@ export default async function ArticleListPage({ searchParams }: { searchParams: 
               });
 
               return (
-                <Link 
-                  key={article.documentId || article.id} 
-                  href={`/article/${slug}`}
-                  className="group py-8 border-b border-border last:border-0 flex flex-col md:flex-row gap-4 md:gap-8 hover:bg-white/[0.02] transition-colors -mx-6 px-6 md:mx-0 md:px-0 rounded-lg"
-                >
-                  <div className="w-full md:w-32 shrink-0 pt-1">
-                    <p className="text-sm text-neutral-500 font-mono">{formattedDate}</p>
-                    <span className="inline-block mt-2 text-xs font-bold uppercase tracking-wider text-accent border border-accent/30 rounded-full px-2 py-0.5">
-                      {category?.name || category?.title || 'Uncategorized'}
-                    </span>
-                  </div>
-                  <div className="flex-grow flex flex-col gap-3">
-                    <h2 className="text-2xl font-bold tracking-tight group-hover:text-accent transition-colors leading-snug">
-                      {title}
-                    </h2>
-                    <p className="text-lg opacity-80 leading-relaxed text-balance">
-                      {description}
-                    </p>
-                    
-                    {article.author && (
-                      <div className="mt-4 flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-full bg-accent text-black flex items-center justify-center text-sm font-bold shadow-md">
-                          {article.author.name?.[0] || 'A'}
-                        </div>
-                        <div className="flex flex-col">
-                          <span className="text-sm font-bold text-neutral-200">{article.author.name}</span>
-                          {article.author.email && <span className="text-xs text-neutral-500">{article.author.email}</span>}
-                        </div>
+                <article key={article.documentId || article.id}>
+                  <Link
+                    href={`/article/${slug}`}
+                    className="group block py-8 border-b border-[var(--border)] last:border-0 -mx-3 px-3 rounded-xl transition-colors hover:bg-[var(--cream)]"
+                  >
+                    <div className="flex flex-col md:flex-row gap-4 md:gap-8">
+                      <div className="w-full md:w-36 shrink-0 pt-1">
+                        <p className="text-sm font-mono text-[var(--ink-muted)] tabular-nums">{formattedDate}</p>
+                        <span className="inline-block mt-2 text-xs font-semibold uppercase tracking-wider text-[var(--accent-dark)] bg-[var(--gold-surface)] px-2 py-1 rounded">
+                          {category?.name || category?.title || 'Uncategorized'}
+                        </span>
                       </div>
-                    )}
+                      <div className="flex-grow flex flex-col gap-3">
+                        <h2 className="text-xl md:text-2xl font-semibold tracking-tight text-[var(--ink)] group-hover:text-[var(--accent-dark)] transition-colors leading-snug text-balance">
+                          {title}
+                        </h2>
+                        <p className="text-base text-[var(--ink-soft)] leading-relaxed text-balance">
+                          {description}
+                        </p>
 
-                    <span className="text-sm font-bold uppercase tracking-widest mt-4 opacity-0 group-hover:opacity-100 transition-opacity text-accent flex items-center gap-2">
-                      Read Article <span className="text-xl leading-none">&rarr;</span>
-                    </span>
-                  </div>
-                </Link>
+                        {article.author && (
+                          <div className="mt-4 flex items-center gap-3">
+                            <div className="w-8 h-8 rounded-lg bg-[var(--accent)] text-[var(--ink)] flex items-center justify-center text-sm font-bold">
+                              {article.author.name?.[0] || 'A'}
+                            </div>
+                            <div className="flex flex-col">
+                              <span className="text-sm font-semibold text-[var(--ink)]">{article.author.name}</span>
+                              {article.author.email && <span className="text-xs text-[var(--ink-muted)]">{article.author.email}</span>}
+                            </div>
+                          </div>
+                        )}
+
+                        <span className="text-sm font-semibold mt-2 opacity-0 group-hover:opacity-100 transition-opacity text-[var(--accent-dark)] flex items-center gap-2">
+                          Read article <span className="text-lg leading-none" aria-hidden="true">→</span>
+                        </span>
+                      </div>
+                    </div>
+                  </Link>
+                </article>
               );
             })
           )}
 
           {/* Pagination */}
           {meta?.pagination?.pageCount > 1 && (
-            <div className="flex justify-center md:justify-start gap-2 mt-12 pt-8 border-t border-border">
+            <nav aria-label="Article pagination" className="flex justify-center md:justify-start gap-2 mt-12 pt-8 border-t border-[var(--border)]">
               {meta.pagination.page > 1 ? (
-                <Link href={`/article?page=${meta.pagination.page - 1}${currentCategory ? `&category=${currentCategory}` : ''}`} className="w-10 h-10 flex items-center justify-center rounded-full bg-neutral-800 hover:bg-neutral-700 transition-colors text-white">
-                  &larr;
+                <Link href={`/article?page=${meta.pagination.page - 1}${currentCategory ? `&category=${currentCategory}` : ''}`} className="w-10 h-10 flex items-center justify-center rounded-lg bg-[var(--border-soft)] hover:bg-[var(--border)] transition-colors text-[var(--ink)]">
+                  <span aria-hidden="true">←</span>
+                  <span className="sr-only">Previous page</span>
                 </Link>
               ) : (
-                <button className="w-10 h-10 flex items-center justify-center rounded-full bg-neutral-800 text-white opacity-50 cursor-not-allowed" disabled>
-                  &larr;
+                <button className="w-10 h-10 flex items-center justify-center rounded-lg bg-[var(--border-soft)] text-[var(--ink-muted)] opacity-60 cursor-not-allowed" disabled>
+                  <span aria-hidden="true">←</span>
+                  <span className="sr-only">Previous page</span>
                 </button>
               )}
-              
+
               {Array.from({ length: meta.pagination.pageCount }).map((_, i) => {
                 const p = i + 1;
                 return (
-                  <Link 
+                  <Link
                     key={p}
                     href={`/article?page=${p}${currentCategory ? `&category=${currentCategory}` : ''}`}
-                    className={`w-10 h-10 flex items-center justify-center rounded-full ${p === meta.pagination.page ? 'bg-accent text-black font-bold' : 'bg-neutral-800 hover:bg-neutral-700 transition-colors text-white'}`}
+                    className={`w-10 h-10 flex items-center justify-center rounded-lg text-sm font-medium transition-colors ${
+                      p === meta.pagination.page
+                        ? 'bg-[var(--ink)] text-[var(--paper)]'
+                        : 'bg-[var(--border-soft)] text-[var(--ink)] hover:bg-[var(--border)]'
+                    }`}
+                    aria-current={p === meta.pagination.page ? 'page' : undefined}
                   >
                     {p}
                   </Link>
@@ -176,15 +209,17 @@ export default async function ArticleListPage({ searchParams }: { searchParams: 
               })}
 
               {meta.pagination.page < meta.pagination.pageCount ? (
-                <Link href={`/article?page=${meta.pagination.page + 1}${currentCategory ? `&category=${currentCategory}` : ''}`} className="w-10 h-10 flex items-center justify-center rounded-full bg-neutral-800 hover:bg-accent hover:text-black transition-colors text-white">
-                  &rarr;
+                <Link href={`/article?page=${meta.pagination.page + 1}${currentCategory ? `&category=${currentCategory}` : ''}`} className="w-10 h-10 flex items-center justify-center rounded-lg bg-[var(--border-soft)] hover:bg-[var(--accent)] hover:text-[var(--ink)] transition-colors text-[var(--ink)]">
+                  <span aria-hidden="true">→</span>
+                  <span className="sr-only">Next page</span>
                 </Link>
               ) : (
-                <button className="w-10 h-10 flex items-center justify-center rounded-full bg-neutral-800 text-white opacity-50 cursor-not-allowed" disabled>
-                  &rarr;
+                <button className="w-10 h-10 flex items-center justify-center rounded-lg bg-[var(--border-soft)] text-[var(--ink-muted)] opacity-60 cursor-not-allowed" disabled>
+                  <span aria-hidden="true">→</span>
+                  <span className="sr-only">Next page</span>
                 </button>
               )}
-            </div>
+            </nav>
           )}
         </div>
       </div>

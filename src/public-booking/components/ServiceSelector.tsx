@@ -37,7 +37,7 @@ export function ServiceSelector({ services, selected, onChange }: ServiceSelecto
   };
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-2" role="group" aria-label="Select services">
       {services.map(service => {
         const isSelected = selectedIds.has(service.id);
         const discountedPrice = service.discount
@@ -49,37 +49,38 @@ export function ServiceSelector({ services, selected, onChange }: ServiceSelecto
             key={service.id}
             type="button"
             onClick={() => toggle(service)}
-            className="flex items-center justify-between p-4 rounded-xl text-left transition-all"
-            style={{
-              border: `2px solid ${isSelected ? '#ffc81e' : '#ebebeb'}`,
-              backgroundColor: isSelected ? '#fff8e1' : '#ffffff',
-            }}
+            className={`flex items-center justify-between p-4 rounded-xl text-left transition-all duration-200 pressable ${
+              isSelected
+                ? 'border-2 border-[var(--accent)] bg-[var(--gold-surface)]'
+                : 'border-2 border-[var(--border)] bg-[var(--paper)] hover:border-[var(--accent)]/50 hover:bg-[var(--cream)]'
+            }`}
+            aria-pressed={isSelected}
           >
             <div className="flex items-center gap-3">
               <div
-                className="w-5 h-5 rounded-md flex items-center justify-center flex-shrink-0 transition-colors"
-                style={{
-                  backgroundColor: isSelected ? '#ffc81e' : '#f0f0f0',
-                  border: `2px solid ${isSelected ? '#ffc81e' : '#d1d5db'}`,
-                }}
+                className={`w-5 h-5 rounded-md flex items-center justify-center flex-shrink-0 transition-colors ${
+                  isSelected
+                    ? 'bg-[var(--accent)] border-[var(--accent)]'
+                    : 'bg-[var(--border-soft)] border-2 border-[var(--border)]'
+                }`}
               >
                 {isSelected && (
-                  <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-                    <path d="M2 6L5 9L10 3" stroke="#1a1a1a" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                  <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+                    <path d="M2 6L5 9L10 3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[var(--ink)]" />
                   </svg>
                 )}
               </div>
-              <span className="font-medium text-sm" style={{ color: '#1a1a1a' }}>
+              <span className="font-medium text-sm text-[var(--ink)]">
                 {service.name}
               </span>
             </div>
 
             <div className="text-right">
-              <span className="font-bold text-sm" style={{ color: isSelected ? '#e6b80b' : '#1a1a1a' }}>
+              <span className={`font-bold text-sm tabular-nums ${isSelected ? 'text-[var(--accent-dark)]' : 'text-[var(--ink)]'}`}>
                 {discountedPrice !== null ? formatPrice(discountedPrice) : formatPrice(service.price)}
               </span>
               {discountedPrice !== null && (
-                <div className="text-xs line-through" style={{ color: '#9ca3af' }}>
+                <div className="text-xs line-through text-[var(--ink-muted)] tabular-nums">
                   {formatPrice(service.price)}
                 </div>
               )}

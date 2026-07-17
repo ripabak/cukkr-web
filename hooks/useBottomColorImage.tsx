@@ -79,6 +79,7 @@ export function useBottomImageColor({
             const textLightness = l > 60 ? 15 : 92;
             const textSaturation = Math.min(s, 60);
 
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setTextColor(`hsl(${h}, ${textSaturation}%, ${textLightness}%)`);
             return;
         }

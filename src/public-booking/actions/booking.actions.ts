@@ -42,11 +42,21 @@ export interface PublicFormData {
   barbers: PublicBarber[];
 }
 
+export interface OpenHoursDay {
+  dayOfWeek: number;
+  isOpen: boolean;
+  openTime: string | null;
+  closeTime: string | null;
+}
+
 export interface BarbershopInfo {
   name: string;
   description?: string | null;
   address?: string | null;
   logoUrl?: string | null;
+  services: PublicService[];
+  barbers: PublicBarber[];
+  openHours: OpenHoursDay[];
 }
 
 export async function getBarbershopInfo(slug: string): Promise<BarbershopInfo> {

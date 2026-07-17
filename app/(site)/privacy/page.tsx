@@ -1,22 +1,22 @@
 export default function PrivacyPage() {
   return (
-    <div className="flex flex-col w-full max-w-[1200px] mx-auto p-6 lg:p-12 gap-16 min-h-screen">
-      <div className="flex flex-col gap-6 max-w-3xl mt-12">
-        <div className="flex items-center gap-4">
-          <span className="w-8 h-[2px] bg-[#ffc81e]" />
-          <span className="text-xs font-bold tracking-[0.3em] uppercase text-[#6b7280]">
+    <div className="flex flex-col w-full max-w-[1200px] mx-auto px-6 lg:px-8 gap-16 lg:gap-20 min-h-[60vh] pb-24">
+      <div className="flex flex-col gap-8 max-w-3xl mt-12 lg:mt-20">
+        <div className="flex items-start gap-3">
+          <span className="w-6 h-[2px] bg-[var(--accent)] mt-2.5" />
+          <span className="text-xs font-semibold tracking-widest uppercase text-[var(--ink-muted)]">
             Legal
           </span>
         </div>
-        <h1 className="text-5xl lg:text-7xl font-black tracking-tighter uppercase text-[#1a1a1a] leading-[0.9]">
+        <h1 className="font-[family-name:var(--font-serif)] text-5xl lg:text-7xl font-bold tracking-tight text-[var(--ink)] leading-[1] text-balance">
           Privacy
           <br />
           <span className="relative inline-block">
-            <span className="relative z-10">Policy</span>
-            <span className="absolute bottom-1 left-0 w-full h-3 bg-[#ffc81e] -z-0" />
+            <span className="relative z-10">policy</span>
+            <span className="absolute bottom-2 left-0 w-full h-3 bg-[var(--accent)] -z-0 opacity-80" />
           </span>
         </h1>
-        <p className="text-sm text-[#6b7280] leading-relaxed">
+        <p className="text-sm text-[var(--ink-soft)]">
           Last updated: June 10, 2026
         </p>
       </div>
@@ -38,21 +38,21 @@ export default function PrivacyPage() {
         </p>
       </Section>
 
-      <Section title="Information We Collect">
-        <p><strong>Account &amp; Profile Data.</strong> When you sign up, we collect your name, email, phone number, role, and optionally your photo and bio.</p>
-        <p><strong>Barbershop Data.</strong> When you register a barbershop, we collect your shop name, address, description, logo, operating hours, timezone, and the services you offer.</p>
-        <p><strong>Team Data.</strong> When you invite barbers to your shop, we collect their name, email, phone, role, and invitation status.</p>
-        <p><strong>Customer Data.</strong> Barbershops may enter customer information such as name, contact details, notes, and the platform aggregates their booking history and visit metrics.</p>
-        <p><strong>Booking &amp; Transaction Data.</strong> For each booking we record the type (walk-in or appointment), status, selected services and pricing, assigned barber, timestamps, and any notes or cancellation reasons.</p>
+      <Section title="Information we collect">
+        <p><strong>Account &amp; profile data.</strong> When you sign up, we collect your name, email, phone number, role, and optionally your photo and bio.</p>
+        <p><strong>Barbershop data.</strong> When you register a barbershop, we collect your shop name, address, description, logo, operating hours, timezone, and the services you offer.</p>
+        <p><strong>Team data.</strong> When you invite barbers to your shop, we collect their name, email, phone, role, and invitation status.</p>
+        <p><strong>Customer data.</strong> Barbershops may enter customer information such as name, contact details, notes, and the platform aggregates their booking history and visit metrics.</p>
+        <p><strong>Booking &amp; transaction data.</strong> For each booking we record the type (walk-in or appointment), status, selected services and pricing, assigned barber, timestamps, and any notes or cancellation reasons.</p>
         <p><strong>Communications.</strong> If you contact us, we receive your name, email, and message content.</p>
-        <p><strong>Automatically Collected Data.</strong> We collect standard server log data — such as IP address, browser type, device info, and pages visited — solely for security and operational purposes. We do not use third-party analytics, advertising trackers, or non-essential cookies.</p>
+        <p><strong>Automatically collected data.</strong> We collect standard server log data — such as IP address, browser type, device info, and pages visited — solely for security and operational purposes. We do not use third-party analytics, advertising trackers, or non-essential cookies.</p>
       </Section>
 
-      <Section title="How We Use Your Information">
+      <Section title="How we use your information">
         <p>We use your information to operate and improve the Platform, authenticate users, process bookings, send notifications, generate business analytics, provide support, and comply with legal obligations. We do not use your data for advertising or profiling unrelated to the Platform.</p>
       </Section>
 
-      <Section title="How We Share Your Information">
+      <Section title="How we share your information">
         <p>We do not sell, rent, or trade your personal information. We only share it:</p>
         <p><strong>Within your barbershop organization</strong> — with authorized team members you control.</p>
         <p><strong>With service providers</strong> — trusted partners (e.g., authentication, hosting) who process data on our instructions.</p>
@@ -62,7 +62,7 @@ export default function PrivacyPage() {
         <p>Any other sharing requires your explicit consent.</p>
       </Section>
 
-      <Section title="Data Retention">
+      <Section title="Data retention">
         <p>We keep your data only as long as needed:</p>
         <p><strong>Account data</strong> — while your account is active; deleted or anonymized upon account closure.</p>
         <p><strong>Booking &amp; transaction data</strong> — for the duration of your shop&rsquo;s active use of the Platform, plus a reasonable retention period for business records.</p>
@@ -70,26 +70,26 @@ export default function PrivacyPage() {
         <p>Barbershop owners are responsible for managing their own customer data in line with applicable laws.</p>
       </Section>
 
-      <Section title="Data Security">
+      <Section title="Data security">
         <p>
           We use encryption (HTTPS/TLS), passwordless authentication, rate limiting, and access controls to protect your data.
           We regularly review our infrastructure for security. However, no online system is 100% secure — we cannot guarantee absolute protection.
         </p>
       </Section>
 
-      <Section title="Your Rights">
+      <Section title="Your rights">
         <p>
           Under Indonesia&rsquo;s Personal Data Protection Law (UU PDP), you have the right to access, correct, delete,
           and port your data; to withdraw consent; and to restrict or object to processing.{" "}
           To exercise these rights, contact us at{" "}
-          <a href="mailto:hello@cukkr.com" className="text-[#1a1a1a] underline hover:text-[#ffc81e] transition-colors">
+          <a href="mailto:hello@cukkr.com" className="text-[var(--ink)] underline hover:text-[var(--accent-dark)] transition-colors">
             hello@cukkr.com
           </a>
           . We&rsquo;ll respond within the legally required timeframe and may verify your identity first.
         </p>
       </Section>
 
-      <Section title="Children&rsquo;s Privacy">
+      <Section title="Children&rsquo;s privacy">
         <p>
           The Cukkr Platform is intended for use by barbershop owners and barbers who are of legal age to operate a business.
           We do not knowingly collect personal information from children under the age of 18.
@@ -98,7 +98,7 @@ export default function PrivacyPage() {
         </p>
       </Section>
 
-      <Section title="International Data Transfers">
+      <Section title="International data transfers">
         <p>
           Your information may be transferred to and processed on servers located outside of your country of residence.
           We take steps to ensure that any such transfers comply with applicable data protection laws and that
@@ -106,7 +106,7 @@ export default function PrivacyPage() {
         </p>
       </Section>
 
-      <Section title="Third-Party Links">
+      <Section title="Third-party links">
         <p>
           The Platform may contain links to third-party websites or services that are not owned or controlled by Cukkr.
           This Privacy Policy does not apply to those third-party services. We encourage you to review the privacy
@@ -114,38 +114,38 @@ export default function PrivacyPage() {
         </p>
       </Section>
 
-      <Section title="Changes to This Privacy Policy">
+      <Section title="Changes to this privacy policy">
         <p>
           We may update this policy from time to time. For material changes, we&rsquo;ll notify you via email
           and/or in-app notice, and post the revised version here. Continued use after changes means you accept the updated policy.
         </p>
       </Section>
 
-      <Section title="Contact Us">
+      <Section title="Contact us">
         <p>
           If you have any questions, concerns, or requests regarding this Privacy Policy or our data practices,
           please contact us at:
         </p>
         <div className="flex flex-col gap-3 mt-3">
           <div className="flex flex-col gap-1">
-            <span className="text-sm font-black tracking-[0.15em] uppercase text-[#1a1a1a]">Email</span>
+            <span className="text-sm font-semibold text-[var(--ink)]">Email</span>
             <a
               href="mailto:hello@cukkr.com"
-              className="text-sm text-[#6b7280] hover:text-[#ffc81e] transition-colors"
+              className="text-sm text-[var(--ink-soft)] hover:text-[var(--ink)] transition-colors"
             >
               hello@cukkr.com
             </a>
           </div>
           <div className="flex flex-col gap-1">
-            <span className="text-sm font-black tracking-[0.15em] uppercase text-[#1a1a1a]">Entity</span>
-            <span className="text-sm text-[#6b7280]">
+            <span className="text-sm font-semibold text-[var(--ink)]">Entity</span>
+            <span className="text-sm text-[var(--ink-soft)]">
               PT AURA KODE NUSANTARA
             </span>
           </div>
           <div className="flex flex-col gap-1">
-            <span className="text-sm font-black tracking-[0.15em] uppercase text-[#1a1a1a]">Jurisdiction</span>
-            <span className="text-sm text-[#6b7280]">
-              Indonesia &mdash; tunduk pada Undang-Undang Perlindungan Data Pribadi (UU PDP) dan Undang-Undang Informasi dan Transaksi Elektronik (UU ITE).
+            <span className="text-sm font-semibold text-[var(--ink)]">Jurisdiction</span>
+            <span className="text-sm text-[var(--ink-soft)]">
+              Indonesia — tunduk pada Undang-Undang Perlindungan Data Pribadi (UU PDP) dan Undang-Undang Informasi dan Transaksi Elektronik (UU ITE).
             </span>
           </div>
         </div>
@@ -156,14 +156,13 @@ export default function PrivacyPage() {
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="flex flex-col gap-6 border-t border-[#ffc81e] pt-12">
-      <h2 className="text-2xl lg:text-3xl font-black tracking-tight uppercase text-[#1a1a1a]">
+    <section className="flex flex-col gap-5 border-t border-[var(--border)] pt-10">
+      <h2 className="text-2xl lg:text-3xl font-semibold tracking-tight text-[var(--ink)]">
         {title}
       </h2>
-      <div className="text-base text-[#6b7280] leading-relaxed max-w-3xl flex flex-col gap-3">
+      <div className="text-base lg:text-lg text-[var(--ink-soft)] leading-relaxed max-w-3xl flex flex-col gap-3 text-balance">
         {children}
       </div>
-    </div>
+    </section>
   );
 }
-

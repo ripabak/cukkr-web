@@ -50,40 +50,31 @@ export function PinInput({ value, onChange, disabled, hasError }: PinInputProps)
     refs[focusIdx].current?.focus();
   };
 
-  const borderColor = (i: number) => {
-    if (hasError) return '#ef4444';
-    if (digits[i]) return '#ffc81e';
-    return '#ebebeb';
-  };
-
   return (
     <div className="flex gap-3 justify-center" onPaste={handlePaste}>
-      {[0, 1, 2, 3].map(i => (
-        <input
-          key={i}
-          ref={refs[i]}
-          type="text"
-          inputMode="numeric"
-          maxLength={1}
-          value={digits[i] === ' ' ? '' : digits[i]}
-          onChange={e => handleChange(i, e.target.value)}
-          onKeyDown={e => handleKeyDown(i, e)}
-          disabled={disabled}
-          className="w-14 h-16 text-center text-2xl font-bold rounded-xl outline-none transition-all"
-          style={{
-            border: `2px solid ${borderColor(i)}`,
-            backgroundColor: digits[i] && digits[i] !== ' ' ? '#fff8e1' : '#f9f9f9',
-            color: '#1a1a1a',
-            caretColor: '#ffc81e',
-          }}
-          onFocus={e =>
-            (e.target.style.border = `2px solid #ffc81e`)
-          }
-          onBlur={e =>
-            (e.target.style.border = `2px solid ${borderColor(i)}`)
-          }
-        />
-      ))}
+      {[0, 1, 2, 3].map(i => {
+        const filled = digits[i] && digits[i] !== ' ';
+        return (
+          <input
+            key={i}
+            ref={refs[i]}
+            type="text"
+            inputMode="numeric"
+            maxLength={1}
+            value={digits[i] === ' ' ? '' : digits[i]}
+            onChange={e => handleChange(i, e.target.value)}
+            onKeyDown={e => handleKeyDown(i, e)}
+            disabled={disabled}
+            className={`w-14 h-16 text-center text-2xl font-bold rounded-xl outline-none transition-all border-2 bg-[var(--paper)] text-[var(--ink)] caret-[var(--accent)] focus:border-[var(--accent)] ${
+              hasError
+                ? 'border-[#ef4444] bg-[#fef2f2]'
+                : filled
+                ? 'border-[var(--accent)] bg-[var(--gold-surface)]'
+                : 'border-[var(--border)]'
+            }`}
+          />
+        );
+      })}
     </div>
   );
 }

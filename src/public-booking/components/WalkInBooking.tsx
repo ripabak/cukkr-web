@@ -16,10 +16,10 @@ type Step = 'pin' | 'details' | 'identity' | 'recap' | 'success';
 const ORDERED: Step[] = ['pin', 'details', 'identity', 'recap'];
 
 const STEP_TITLES: Record<Step, string> = {
-  pin: 'Enter Shop PIN',
-  details: 'Booking Details',
-  identity: 'Your Information',
-  recap: 'Review Booking',
+  pin: 'Enter shop PIN',
+  details: 'Booking details',
+  identity: 'Your information',
+  recap: 'Review booking',
   success: '',
 };
 
@@ -62,7 +62,7 @@ export function WalkInBooking({ slug, formData }: Props) {
       router.push(`/${slug}/booking`);
     } else {
       setStep(ORDERED[idx - 1]);
-      window.scrollTo(0, 0);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
@@ -74,9 +74,10 @@ export function WalkInBooking({ slug, formData }: Props) {
         const result = await validatePin(slug, state.pin);
         setValidationToken(result.validationToken);
         setStep('details');
-        window.scrollTo(0, 0);
-      } catch (err: any) {
-        setPinError(err.message || 'Invalid PIN. Please try again.');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } catch (err: unknown) {
+        const message = err instanceof Error ? err.message : 'Invalid PIN. Please try again.';
+        setPinError(message);
       }
     });
   };
@@ -84,13 +85,13 @@ export function WalkInBooking({ slug, formData }: Props) {
   const handleDetailsNext = () => {
     if (state.serviceIds.length === 0) return;
     setStep('identity');
-    window.scrollTo(0, 0);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleIdentityNext = () => {
     if (!state.identity.name.trim()) return;
     setStep('recap');
-    window.scrollTo(0, 0);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleSubmit = () => {
@@ -107,8 +108,9 @@ export function WalkInBooking({ slug, formData }: Props) {
           notes: state.notes?.trim() || null,
         });
         setStep('success');
-      } catch (err: any) {
-        setSubmitError(err.message || 'Failed to create booking. Please try again.');
+      } catch (err: unknown) {
+        const message = err instanceof Error ? err.message : 'We could not check you in. Please try again.';
+        setSubmitError(message);
       }
     });
   };
@@ -117,40 +119,40 @@ export function WalkInBooking({ slug, formData }: Props) {
 
   if (step === 'success') {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center px-4 py-12 bg-white">
+      <div className="min-h-screen flex flex-col items-center justify-center px-4 py-12 bg-[var(--paper)]">
         <div className="w-full max-w-sm text-center">
           <div className="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 bg-[#f0fdf4]">
-            <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+            <svg width="40" height="40" viewBox="0 0 40 40" fill="none" aria-hidden="true">
               <path d="M8 20L16 28L32 12" stroke="#22c55e" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </div>
-          <h1 className="text-2xl font-black mb-2 text-[#1a1a1a]">You&apos;re checked in!</h1>
-          <p className="text-sm mb-8 text-[#6b7280]">
+          <h1 className="text-2xl font-bold mb-2 text-[var(--ink)]">You&apos;re checked in</h1>
+          <p className="text-sm mb-8 text-[var(--ink-soft)]">
             You&apos;re on the queue. Sit back and wait for your name.
           </p>
-          <div className="rounded-2xl p-4 mb-8 text-left bg-[#f9f9f9]">
+          <div className="rounded-2xl p-4 mb-8 text-left bg-[var(--cream)] border border-[var(--border-soft)]">
             <div className="flex justify-between text-sm mb-2">
-              <span className="text-[#6b7280]">Name</span>
-              <span className="font-medium text-[#1a1a1a]">{state.identity.name}</span>
+              <span className="text-[var(--ink-muted)]">Name</span>
+              <span className="font-medium text-[var(--ink)]">{state.identity.name}</span>
             </div>
             {state.identity.email && (
               <div className="flex justify-between text-sm mb-2">
-                <span className="text-[#6b7280]">Email</span>
-                <span className="font-medium text-[#1a1a1a]">{state.identity.email}</span>
+                <span className="text-[var(--ink-muted)]">Email</span>
+                <span className="font-medium text-[var(--ink)]">{state.identity.email}</span>
               </div>
             )}
             {state.barberName && (
               <div className="flex justify-between text-sm">
-                <span className="text-[#6b7280]">Barber</span>
-                <span className="font-medium text-[#1a1a1a]">{state.barberName}</span>
+                <span className="text-[var(--ink-muted)]">Barber</span>
+                <span className="font-medium text-[var(--ink)]">{state.barberName}</span>
               </div>
             )}
           </div>
           <button
             onClick={() => { reset(); router.push(`/${slug}`); }}
-            className="w-full py-4 rounded-2xl font-black text-base bg-[#ffc81e] text-[#1a1a1a] hover:bg-[#e6b80b] transition-colors"
+            className="w-full py-4 rounded-xl font-semibold text-base bg-[var(--accent)] text-[var(--ink)] pressable shadow-[var(--shadow-accent)]"
           >
-            Back to Home
+            Back to home
           </button>
         </div>
       </div>
@@ -158,7 +160,7 @@ export function WalkInBooking({ slug, formData }: Props) {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-white">
+    <div className="min-h-screen flex flex-col bg-[var(--paper)]">
       <BookingHeader
         title={STEP_TITLES[step]}
         subtitle={STEP_SUBTITLES[step]}
@@ -168,7 +170,6 @@ export function WalkInBooking({ slug, formData }: Props) {
       />
 
       <div className="flex-grow px-4 py-6 max-w-sm mx-auto w-full">
-
         {step === 'pin' && (
           <div className="flex flex-col gap-6">
             <PinInput
@@ -183,7 +184,7 @@ export function WalkInBooking({ slug, formData }: Props) {
             <button
               onClick={handlePinNext}
               disabled={state.pin.length < 4 || isPinPending}
-              className="w-full py-4 rounded-2xl font-black text-base transition-opacity bg-[#ffc81e] text-[#1a1a1a] disabled:opacity-40"
+              className="w-full py-4 rounded-xl font-semibold text-base transition-all bg-[var(--accent)] text-[var(--ink)] disabled:opacity-40 disabled:hover:translate-y-0 pressable shadow-[var(--shadow-accent)]"
             >
               {isPinPending ? 'Verifying...' : 'Verify PIN'}
             </button>
@@ -193,7 +194,7 @@ export function WalkInBooking({ slug, formData }: Props) {
         {step === 'details' && (
           <div className="flex flex-col gap-6">
             <div>
-              <p className="text-sm font-semibold mb-3 text-[#1a1a1a]">
+              <p className="text-sm font-semibold mb-3 text-[var(--ink)]">
                 Service <span className="text-[#ef4444]">*</span>
               </p>
               {formData.services.length ? (
@@ -203,13 +204,15 @@ export function WalkInBooking({ slug, formData }: Props) {
                   onChange={setServices}
                 />
               ) : (
-                <div className="text-sm text-[#9ca3af]">No services available.</div>
+                <div className="text-sm text-[var(--ink-muted)] p-4 rounded-xl bg-[var(--cream)] border border-[var(--border-soft)]">
+                  No services available.
+                </div>
               )}
             </div>
 
             <div>
-              <p className="text-sm font-semibold mb-3 text-[#1a1a1a]">
-                Barber <span className="text-xs font-normal text-[#9ca3af]">(optional)</span>
+              <p className="text-sm font-semibold mb-3 text-[var(--ink)]">
+                Barber <span className="text-xs font-normal text-[var(--ink-muted)]">(optional)</span>
               </p>
               <BarberSelector
                 barbers={formData.barbers}
@@ -219,22 +222,23 @@ export function WalkInBooking({ slug, formData }: Props) {
             </div>
 
             <div>
-              <label className="block text-sm font-semibold mb-1.5 text-[#1a1a1a]">
-                Notes <span className="text-xs font-normal text-[#9ca3af]">(optional)</span>
+              <label className="block text-sm font-semibold mb-1.5 text-[var(--ink)]" htmlFor="walkin-notes">
+                Notes <span className="text-xs font-normal text-[var(--ink-muted)]">(optional)</span>
               </label>
               <textarea
+                id="walkin-notes"
                 placeholder="e.g. Clean fade, reference photo available"
                 value={state.notes}
                 onChange={e => setNotes(e.target.value)}
                 rows={3}
-                className="w-full px-4 py-3 rounded-xl text-sm outline-none transition-all resize-none border-2 border-[#ebebeb] text-[#1a1a1a] bg-white focus:border-[#ffc81e]"
+                className="w-full px-4 py-3 rounded-xl text-sm outline-none transition-all resize-none border-2 border-[var(--border)] text-[var(--ink)] bg-[var(--paper)] focus:border-[var(--accent)] placeholder:text-[var(--ink-muted)]"
               />
             </div>
 
             <button
               onClick={handleDetailsNext}
               disabled={state.serviceIds.length === 0}
-              className="w-full py-4 rounded-2xl font-black text-base transition-opacity bg-[#ffc81e] text-[#1a1a1a] disabled:opacity-40"
+              className="w-full py-4 rounded-xl font-semibold text-base transition-all bg-[var(--accent)] text-[var(--ink)] disabled:opacity-40 disabled:hover:translate-y-0 pressable shadow-[var(--shadow-accent)]"
             >
               Continue
             </button>
@@ -254,54 +258,54 @@ export function WalkInBooking({ slug, formData }: Props) {
 
         {step === 'recap' && (
           <div className="flex flex-col gap-5">
-            <div className="rounded-2xl p-4 bg-[#f9f9f9]">
-              <p className="text-xs font-semibold uppercase tracking-wider mb-3 text-[#9ca3af]">
+            <div className="rounded-2xl p-4 bg-[var(--cream)] border border-[var(--border-soft)]">
+              <p className="text-xs font-semibold uppercase tracking-wider mb-3 text-[var(--ink-muted)]">
                 Services
               </p>
               {state.selectedServices.map(s => (
                 <div key={s.id} className="flex justify-between text-sm mb-2">
-                  <span className="text-[#1a1a1a]">{s.name}</span>
-                  <span className="font-medium text-[#1a1a1a]">{formatPrice(s.price)}</span>
+                  <span className="text-[var(--ink)]">{s.name}</span>
+                  <span className="font-medium text-[var(--ink)] tabular-nums">{formatPrice(s.price)}</span>
                 </div>
               ))}
-              <div className="flex justify-between text-sm font-black pt-2 mt-1 border-t border-[#ebebeb]">
-                <span className="text-[#1a1a1a]">Total</span>
-                <span className="text-[#e6b80b]">{formatPrice(totalPrice)}</span>
+              <div className="flex justify-between text-sm font-bold pt-2 mt-1 border-t border-[var(--border)]">
+                <span className="text-[var(--ink)]">Total</span>
+                <span className="text-[var(--accent-dark)] tabular-nums">{formatPrice(totalPrice)}</span>
               </div>
             </div>
 
-            <div className="rounded-2xl p-4 bg-[#f9f9f9]">
-              <p className="text-xs font-semibold uppercase tracking-wider mb-3 text-[#9ca3af]">
+            <div className="rounded-2xl p-4 bg-[var(--cream)] border border-[var(--border-soft)]">
+              <p className="text-xs font-semibold uppercase tracking-wider mb-3 text-[var(--ink-muted)]">
                 Preferences
               </p>
               <div className="flex justify-between text-sm mb-2">
-                <span className="text-[#6b7280]">Barber</span>
-                <span className="font-medium text-[#1a1a1a]">
+                <span className="text-[var(--ink-soft)]">Barber</span>
+                <span className="font-medium text-[var(--ink)]">
                   {state.barberName || 'Any available barber'}
                 </span>
               </div>
               {state.notes && (
                 <div className="flex justify-between text-sm">
-                  <span className="text-[#6b7280]">Notes</span>
-                  <span className="font-medium text-right max-w-[60%] text-[#1a1a1a]">
+                  <span className="text-[var(--ink-soft)]">Notes</span>
+                  <span className="font-medium text-right max-w-[60%] text-[var(--ink)]">
                     {state.notes}
                   </span>
                 </div>
               )}
             </div>
 
-            <div className="rounded-2xl p-4 bg-[#f9f9f9]">
-              <p className="text-xs font-semibold uppercase tracking-wider mb-3 text-[#9ca3af]">
-                Your Details
+            <div className="rounded-2xl p-4 bg-[var(--cream)] border border-[var(--border-soft)]">
+              <p className="text-xs font-semibold uppercase tracking-wider mb-3 text-[var(--ink-muted)]">
+                Your details
               </p>
               <div className="flex justify-between text-sm mb-2">
-                <span className="text-[#6b7280]">Name</span>
-                <span className="font-medium text-[#1a1a1a]">{state.identity.name}</span>
+                <span className="text-[var(--ink-soft)]">Name</span>
+                <span className="font-medium text-[var(--ink)]">{state.identity.name}</span>
               </div>
               {state.identity.email && (
                 <div className="flex justify-between text-sm">
-                  <span className="text-[#6b7280]">Email</span>
-                  <span className="font-medium text-[#1a1a1a]">{state.identity.email}</span>
+                  <span className="text-[var(--ink-soft)]">Email</span>
+                  <span className="font-medium text-[var(--ink)]">{state.identity.email}</span>
                 </div>
               )}
             </div>
@@ -313,9 +317,9 @@ export function WalkInBooking({ slug, formData }: Props) {
             <button
               onClick={handleSubmit}
               disabled={isSubmitPending}
-              className="w-full py-4 rounded-2xl font-black text-base transition-opacity bg-[#ffc81e] text-[#1a1a1a] disabled:opacity-60"
+              className="w-full py-4 rounded-xl font-semibold text-base transition-all bg-[var(--accent)] text-[var(--ink)] disabled:opacity-60 disabled:hover:translate-y-0 pressable shadow-[var(--shadow-accent)]"
             >
-              {isSubmitPending ? 'Checking in...' : 'Confirm Walk-in'}
+              {isSubmitPending ? 'Checking in...' : 'Confirm walk-in'}
             </button>
           </div>
         )}

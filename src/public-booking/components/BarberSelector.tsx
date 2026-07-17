@@ -9,13 +9,13 @@ interface BarberSelectorProps {
 }
 
 export function BarberSelector({ barbers, selectedId, onChange }: BarberSelectorProps) {
-  const options = [{ id: null, name: 'Barber Mana Saja', avatarUrl: null }, ...barbers] as (
+  const options = [{ id: null, name: 'Barber mana saja', avatarUrl: null }, ...barbers] as (
     | PublicBarber
     | { id: null; name: string; avatarUrl: null }
   )[];
 
   return (
-    <div className="flex flex-wrap gap-2">
+    <div className="flex flex-wrap gap-2" role="group" aria-label="Select barber">
       {options.map(barber => {
         const isSelected = barber.id === selectedId;
         const initials = barber.name
@@ -30,30 +30,32 @@ export function BarberSelector({ barbers, selectedId, onChange }: BarberSelector
             key={barber.id ?? 'any'}
             type="button"
             onClick={() => onChange(barber.id ?? null, barber.id ? barber.name : null)}
-            className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium transition-all"
-            style={{
-              border: `2px solid ${isSelected ? '#ffc81e' : '#ebebeb'}`,
-              backgroundColor: isSelected ? '#fff8e1' : '#ffffff',
-              color: '#1a1a1a',
-            }}
+            className={`flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium transition-all duration-200 pressable ${
+              isSelected
+                ? 'border-2 border-[var(--accent)] bg-[var(--gold-surface)] text-[var(--ink)]'
+                : 'border-2 border-[var(--border)] bg-[var(--paper)] text-[var(--ink)] hover:border-[var(--accent)]/50 hover:bg-[var(--cream)]'
+            }`}
+            aria-pressed={isSelected}
           >
             {barber.id === null ? (
-              <span className="text-base">✨</span>
+              <span className="text-base" aria-hidden="true">✨</span>
             ) : (barber as PublicBarber).avatarUrl ? (
-              <img
-                src={(barber as PublicBarber).avatarUrl!}
-                alt={barber.name}
-                className="w-6 h-6 rounded-full object-cover"
-              />
+              <>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={(barber as PublicBarber).avatarUrl!}
+                  alt={barber.name}
+                  className="w-6 h-6 rounded-lg object-cover"
+                />
+              </>
             ) : (
-              <div
-                className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold"
-                style={{ backgroundColor: isSelected ? '#ffc81e' : '#e5e7eb', color: isSelected ? '#1a1a1a' : '#6b7280' }}
-              >
+              <div className={`w-6 h-6 rounded-lg flex items-center justify-center text-xs font-bold ${
+                isSelected ? 'bg-[var(--accent)] text-[var(--ink)]' : 'bg-[var(--border-soft)] text-[var(--ink-muted)]'
+              }`}>
                 {initials}
               </div>
             )}
-            {barber.name}
+            <span className="truncate max-w-[140px]">{barber.name}</span>
           </button>
         );
       })}

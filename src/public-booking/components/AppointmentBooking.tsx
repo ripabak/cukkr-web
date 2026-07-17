@@ -19,9 +19,9 @@ type Step = 'details' | 'identity' | 'recap' | 'success';
 const ORDERED: Step[] = ['details', 'identity', 'recap'];
 
 const STEP_TITLES: Record<Step, string> = {
-  details: 'Booking Details',
-  identity: 'Your Information',
-  recap: 'Review Booking',
+  details: 'Booking details',
+  identity: 'Your information',
+  recap: 'Review booking',
   success: '',
 };
 
@@ -116,7 +116,7 @@ export function AppointmentBooking({ slug, formData }: Props) {
       router.push(`/${slug}/booking`);
     } else {
       setStep(ORDERED[idx - 1]);
-      window.scrollTo(0, 0);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
@@ -125,12 +125,12 @@ export function AppointmentBooking({ slug, formData }: Props) {
     const iso = new Date(`${dateValue}T${timeValue}`).toISOString();
     setScheduledAt(iso, formatDisplayDateTime(dateValue, timeValue));
     setStep('identity');
-    window.scrollTo(0, 0);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleIdentityNext = () => {
     setStep('recap');
-    window.scrollTo(0, 0);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleSubmit = () => {
@@ -147,8 +147,9 @@ export function AppointmentBooking({ slug, formData }: Props) {
           notes: state.notes?.trim() || null,
         });
         setStep('success');
-      } catch (err: any) {
-        setSubmitError(err.message || 'Failed to submit booking. Please try again.');
+      } catch (err: unknown) {
+        const message = err instanceof Error ? err.message : 'We could not submit your booking. Please try again.';
+        setSubmitError(message);
       }
     });
   };
@@ -157,42 +158,42 @@ export function AppointmentBooking({ slug, formData }: Props) {
 
   if (step === 'success') {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center px-4 py-12 bg-white">
+      <div className="min-h-screen flex flex-col items-center justify-center px-4 py-12 bg-[var(--paper)]">
         <div className="w-full max-w-sm text-center">
           <div className="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 bg-[#f0fdf4]">
-            <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+            <svg width="40" height="40" viewBox="0 0 40 40" fill="none" aria-hidden="true">
               <path d="M8 20L16 28L32 12" stroke="#22c55e" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </div>
-          <h1 className="text-2xl font-black mb-2 text-[#1a1a1a]">Appointment Submitted!</h1>
-          <p className="text-sm mb-8 text-[#6b7280]">
+          <h1 className="text-2xl font-bold mb-2 text-[var(--ink)]">Appointment submitted</h1>
+          <p className="text-sm mb-8 text-[var(--ink-soft)]">
             Check your email to confirm your appointment. Your booking will only be processed after verification.
           </p>
-          <div className="rounded-2xl p-4 mb-8 text-left bg-[#f9f9f9]">
+          <div className="rounded-2xl p-4 mb-8 text-left bg-[var(--cream)] border border-[var(--border-soft)]">
             <div className="flex justify-between text-sm mb-2">
-              <span className="text-[#6b7280]">Name</span>
-              <span className="font-medium text-[#1a1a1a]">{state.identity.name}</span>
+              <span className="text-[var(--ink-muted)]">Name</span>
+              <span className="font-medium text-[var(--ink)]">{state.identity.name}</span>
             </div>
             {state.displayDateTime && (
               <div className="flex justify-between text-sm mb-2">
-                <span className="text-[#6b7280]">Schedule</span>
-                <span className="font-medium text-right max-w-[60%] text-[#1a1a1a]">
+                <span className="text-[var(--ink-muted)]">Schedule</span>
+                <span className="font-medium text-right max-w-[60%] text-[var(--ink)]">
                   {state.displayDateTime}
                 </span>
               </div>
             )}
             {state.barberName && (
               <div className="flex justify-between text-sm">
-                <span className="text-[#6b7280]">Barber</span>
-                <span className="font-medium text-[#1a1a1a]">{state.barberName}</span>
+                <span className="text-[var(--ink-muted)]">Barber</span>
+                <span className="font-medium text-[var(--ink)]">{state.barberName}</span>
               </div>
             )}
           </div>
           <button
             onClick={() => { reset(); router.push(`/${slug}`); }}
-            className="w-full py-4 rounded-2xl font-black text-base bg-[#ffc81e] text-[#1a1a1a] hover:bg-[#e6b80b] transition-colors"
+            className="w-full py-4 rounded-xl font-semibold text-base bg-[var(--accent)] text-[var(--ink)] pressable shadow-[var(--shadow-accent)]"
           >
-            Back to Home
+            Back to home
           </button>
         </div>
       </div>
@@ -200,7 +201,7 @@ export function AppointmentBooking({ slug, formData }: Props) {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-white">
+    <div className="min-h-screen flex flex-col bg-[var(--paper)]">
       <BookingHeader
         title={STEP_TITLES[step]}
         subtitle={STEP_SUBTITLES[step]}
@@ -210,11 +211,10 @@ export function AppointmentBooking({ slug, formData }: Props) {
       />
 
       <div className="flex-grow px-4 py-6 max-w-sm mx-auto w-full">
-
         {step === 'details' && (
           <div className="flex flex-col gap-6">
             <div>
-              <p className="text-sm font-semibold mb-3 text-[#1a1a1a]">
+              <p className="text-sm font-semibold mb-3 text-[var(--ink)]">
                 Service <span className="text-[#ef4444]">*</span>
               </p>
               {formData.services.length ? (
@@ -224,13 +224,15 @@ export function AppointmentBooking({ slug, formData }: Props) {
                   onChange={setServices}
                 />
               ) : (
-                <div className="text-sm text-[#9ca3af]">No services available.</div>
+                <div className="text-sm text-[var(--ink-muted)] p-4 rounded-xl bg-[var(--cream)] border border-[var(--border-soft)]">
+                  No services available.
+                </div>
               )}
             </div>
 
             <div>
-              <p className="text-sm font-semibold mb-3 text-[#1a1a1a]">
-                Barber <span className="text-xs font-normal text-[#9ca3af]">(optional)</span>
+              <p className="text-sm font-semibold mb-3 text-[var(--ink)]">
+                Barber <span className="text-xs font-normal text-[var(--ink-muted)]">(optional)</span>
               </p>
               <BarberSelector
                 barbers={formData.barbers}
@@ -240,37 +242,36 @@ export function AppointmentBooking({ slug, formData }: Props) {
             </div>
 
             <div>
-              <label className="block text-sm font-semibold mb-1.5 text-[#1a1a1a]">
+              <label className="block text-sm font-semibold mb-1.5 text-[var(--ink)]" htmlFor="booking-date">
                 Date <span className="text-[#ef4444]">*</span>
               </label>
               <input
+                id="booking-date"
                 type="date"
                 value={dateValue}
                 min={todayStr}
                 onChange={e => handleDateChange(e.target.value)}
-                className="w-full px-4 py-3 rounded-xl text-sm outline-none transition-all border-2 border-[#ebebeb] text-[#1a1a1a] bg-white focus:border-[#ffc81e]"
+                className="w-full px-4 py-3 rounded-xl text-sm outline-none transition-all border-2 border-[var(--border)] text-[var(--ink)] bg-[var(--paper)] focus:border-[var(--accent)]"
               />
             </div>
 
             {dateValue && (
               <div>
-                <label className="block text-sm font-semibold mb-2 text-[#1a1a1a]">
+                <label className="block text-sm font-semibold mb-2 text-[var(--ink)]">
                   Time <span className="text-[#ef4444]">*</span>
                 </label>
 
                 {isLoadingAvailability && (
-                  <div className="flex items-center gap-2 py-4 text-sm text-[#9ca3af]">
-                    <svg className="animate-spin" width="16" height="16" viewBox="0 0 16 16" fill="none">
-                      <circle cx="8" cy="8" r="6" stroke="#d1d5db" strokeWidth="2" />
-                      <path d="M8 2a6 6 0 0 1 6 6" stroke="#ffc81e" strokeWidth="2" strokeLinecap="round" />
-                    </svg>
-                    Checking availability...
+                  <div className="grid grid-cols-4 gap-2">
+                    {Array.from({ length: 8 }).map((_, i) => (
+                      <div key={i} className="h-10 rounded-xl bg-[var(--border-soft)] animate-pulse" />
+                    ))}
                   </div>
                 )}
 
                 {!isLoadingAvailability && availability && !availability.isOpen && (
-                  <div className="rounded-xl px-4 py-3 text-sm bg-[#fef2f2] border border-[#fecaca] text-[#ef4444]">
-                    Barbershop is closed on this date. Please choose another date.
+                  <div className="rounded-xl px-4 py-3 text-sm bg-[#fef2f2] border border-[#fecaca] text-[#b91c1c]">
+                    The shop is closed on this date. Please choose another date.
                   </div>
                 )}
 
@@ -281,11 +282,12 @@ export function AppointmentBooking({ slug, formData }: Props) {
                         key={slot}
                         type="button"
                         onClick={() => setTimeValue(slot)}
-                        className={`py-2 rounded-xl text-sm font-medium transition-all border-2 ${
+                        className={`py-2 rounded-xl text-sm font-medium transition-all border-2 tabular-nums ${
                           timeValue === slot
-                            ? 'bg-[#ffc81e] border-[#ffc81e] text-[#1a1a1a]'
-                            : 'bg-white border-[#ebebeb] text-[#1a1a1a] hover:border-[#ffc81e]'
+                            ? 'bg-[var(--accent)] border-[var(--accent)] text-[var(--ink)]'
+                            : 'bg-[var(--paper)] border-[var(--border)] text-[var(--ink)] hover:border-[var(--accent)]'
                         }`}
+                        aria-pressed={timeValue === slot}
                       >
                         {slot}
                       </button>
@@ -296,22 +298,23 @@ export function AppointmentBooking({ slug, formData }: Props) {
             )}
 
             <div>
-              <label className="block text-sm font-semibold mb-1.5 text-[#1a1a1a]">
-                Notes <span className="text-xs font-normal text-[#9ca3af]">(optional)</span>
+              <label className="block text-sm font-semibold mb-1.5 text-[var(--ink)]" htmlFor="booking-notes">
+                Notes <span className="text-xs font-normal text-[var(--ink-muted)]">(optional)</span>
               </label>
               <textarea
+                id="booking-notes"
                 placeholder="e.g. Clean fade, reference photo available"
                 value={state.notes}
                 onChange={e => setNotes(e.target.value)}
                 rows={3}
-                className="w-full px-4 py-3 rounded-xl text-sm outline-none transition-all resize-none border-2 border-[#ebebeb] text-[#1a1a1a] bg-white focus:border-[#ffc81e]"
+                className="w-full px-4 py-3 rounded-xl text-sm outline-none transition-all resize-none border-2 border-[var(--border)] text-[var(--ink)] bg-[var(--paper)] focus:border-[var(--accent)] placeholder:text-[var(--ink-muted)]"
               />
             </div>
 
             <button
               onClick={handleDetailsNext}
               disabled={state.serviceIds.length === 0 || !dateValue || !timeValue}
-              className="w-full py-4 rounded-2xl font-black text-base transition-opacity bg-[#ffc81e] text-[#1a1a1a] disabled:opacity-40"
+              className="w-full py-4 rounded-xl font-semibold text-base transition-all bg-[var(--accent)] text-[var(--ink)] disabled:opacity-40 disabled:hover:translate-y-0 pressable shadow-[var(--shadow-accent)]"
             >
               Continue
             </button>
@@ -331,73 +334,73 @@ export function AppointmentBooking({ slug, formData }: Props) {
 
         {step === 'recap' && (
           <div className="flex flex-col gap-5">
-            <div className="rounded-2xl p-4 bg-[#f9f9f9]">
-              <p className="text-xs font-semibold uppercase tracking-wider mb-3 text-[#9ca3af]">
-                Schedule & Preferences
+            <div className="rounded-2xl p-4 bg-[var(--cream)] border border-[var(--border-soft)]">
+              <p className="text-xs font-semibold uppercase tracking-wider mb-3 text-[var(--ink-muted)]">
+                Schedule & preferences
               </p>
               {state.displayDateTime && (
                 <div className="flex justify-between text-sm mb-2">
-                  <span className="text-[#6b7280]">Date & Time</span>
-                  <span className="font-medium text-right max-w-[60%] text-[#1a1a1a]">
+                  <span className="text-[var(--ink-soft)]">Date & time</span>
+                  <span className="font-medium text-right max-w-[60%] text-[var(--ink)]">
                     {state.displayDateTime}
                   </span>
                 </div>
               )}
               <div className="flex justify-between text-sm mb-2">
-                <span className="text-[#6b7280]">Barber</span>
-                <span className="font-medium text-[#1a1a1a]">
+                <span className="text-[var(--ink-soft)]">Barber</span>
+                <span className="font-medium text-[var(--ink)]">
                   {state.barberName || 'Any available barber'}
                 </span>
               </div>
               {state.notes && (
                 <div className="flex justify-between text-sm">
-                  <span className="text-[#6b7280]">Notes</span>
-                  <span className="font-medium text-right max-w-[60%] text-[#1a1a1a]">
+                  <span className="text-[var(--ink-soft)]">Notes</span>
+                  <span className="font-medium text-right max-w-[60%] text-[var(--ink)]">
                     {state.notes}
                   </span>
                 </div>
               )}
             </div>
 
-            <div className="rounded-2xl p-4 bg-[#f9f9f9]">
-              <p className="text-xs font-semibold uppercase tracking-wider mb-3 text-[#9ca3af]">
+            <div className="rounded-2xl p-4 bg-[var(--cream)] border border-[var(--border-soft)]">
+              <p className="text-xs font-semibold uppercase tracking-wider mb-3 text-[var(--ink-muted)]">
                 Services
               </p>
               {state.selectedServices.map(s => (
                 <div key={s.id} className="flex justify-between text-sm mb-2">
-                  <span className="text-[#1a1a1a]">{s.name}</span>
-                  <span className="font-medium text-[#1a1a1a]">{formatPrice(s.price)}</span>
+                  <span className="text-[var(--ink)]">{s.name}</span>
+                  <span className="font-medium text-[var(--ink)] tabular-nums">{formatPrice(s.price)}</span>
                 </div>
               ))}
-              <div className="flex justify-between text-sm font-black pt-2 mt-1 border-t border-[#ebebeb]">
-                <span className="text-[#1a1a1a]">Total</span>
-                <span className="text-[#e6b80b]">{formatPrice(totalPrice)}</span>
+              <div className="flex justify-between text-sm font-bold pt-2 mt-1 border-t border-[var(--border)]">
+                <span className="text-[var(--ink)]">Total</span>
+                <span className="text-[var(--accent-dark)] tabular-nums">{formatPrice(totalPrice)}</span>
               </div>
             </div>
 
-            <div className="rounded-2xl p-4 bg-[#f9f9f9]">
-              <p className="text-xs font-semibold uppercase tracking-wider mb-3 text-[#9ca3af]">
-                Your Details
+            <div className="rounded-2xl p-4 bg-[var(--cream)] border border-[var(--border-soft)]">
+              <p className="text-xs font-semibold uppercase tracking-wider mb-3 text-[var(--ink-muted)]">
+                Your details
               </p>
               <div className="flex justify-between text-sm mb-2">
-                <span className="text-[#6b7280]">Name</span>
-                <span className="font-medium text-[#1a1a1a]">{state.identity.name}</span>
+                <span className="text-[var(--ink-soft)]">Name</span>
+                <span className="font-medium text-[var(--ink)]">{state.identity.name}</span>
               </div>
               {state.identity.email && (
                 <div className="flex justify-between text-sm">
-                  <span className="text-[#6b7280]">Email</span>
-                  <span className="font-medium text-[#1a1a1a]">{state.identity.email}</span>
+                  <span className="text-[var(--ink-soft)]">Email</span>
+                  <span className="font-medium text-[var(--ink)]">{state.identity.email}</span>
                 </div>
               )}
             </div>
 
-            <div className="rounded-xl p-3 text-sm flex items-start gap-2 bg-[#fffbf0] border border-[#ffc81e]">
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="shrink-0 mt-0.5">
-                <circle cx="8" cy="8" r="7" stroke="#ffc81e" strokeWidth="1.5" />
-                <path d="M8 5v3.5" stroke="#ffc81e" strokeWidth="1.5" strokeLinecap="round" />
-                <circle cx="8" cy="11" r="0.75" fill="#ffc81e" />
+            <div className="rounded-xl p-3 text-sm flex items-start gap-3 bg-[var(--gold-surface)] border border-[var(--accent)]/30">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="shrink-0 mt-0.5" aria-hidden="true">
+                <circle cx="8" cy="8" r="7" stroke="var(--accent-dark)" strokeWidth="1.5" />
+                <path d="M8 5v3.5" stroke="var(--accent-dark)" strokeWidth="1.5" strokeLinecap="round" />
+                <circle cx="8" cy="11" r="0.75" fill="var(--accent-dark)" />
               </svg>
-              <span className="text-[#6b7280]">
+              <span className="text-[var(--ink-soft)]">
                 Your appointment needs barber confirmation before it&apos;s active.
               </span>
             </div>
@@ -409,9 +412,9 @@ export function AppointmentBooking({ slug, formData }: Props) {
             <button
               onClick={handleSubmit}
               disabled={isSubmitPending}
-              className="w-full py-4 rounded-2xl font-black text-base transition-opacity bg-[#ffc81e] text-[#1a1a1a] disabled:opacity-60"
+              className="w-full py-4 rounded-xl font-semibold text-base transition-all bg-[var(--accent)] text-[var(--ink)] disabled:opacity-60 disabled:hover:translate-y-0 pressable shadow-[var(--shadow-accent)]"
             >
-              {isSubmitPending ? 'Submitting...' : 'Confirm Appointment'}
+              {isSubmitPending ? 'Submitting...' : 'Confirm appointment'}
             </button>
           </div>
         )}

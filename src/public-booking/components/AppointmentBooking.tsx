@@ -251,7 +251,7 @@ export function AppointmentBooking({ slug, formData }: Props) {
                 value={dateValue}
                 min={todayStr}
                 onChange={e => handleDateChange(e.target.value)}
-                className="w-full px-4 py-3 rounded-xl text-sm outline-none transition-all border-2 border-[var(--border)] text-[var(--ink)] bg-[var(--paper)] focus:border-[var(--accent)]"
+                className="w-full min-w-0 px-4 py-3 rounded-xl text-sm outline-none transition-all border-2 border-[var(--border)] text-[var(--ink)] bg-[var(--paper)] focus:border-[var(--accent)]"
               />
             </div>
 

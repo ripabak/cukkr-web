@@ -1,12 +1,14 @@
 import Link from "next/link";
 import Image from "next/image";
 import { NavLink } from "@/components/NavLink";
-import { getDictionary, t } from "@/src/lib/i18n";
+import { LanguageSwitcher } from "@/src/components/LanguageSwitcher";
+import { getDictionary, getLanguage, t } from "@/src/lib/i18n";
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "https://app.cukkr.com";
 
 export default async function SiteLayout({ children }: { children: React.ReactNode }) {
   const dict = await getDictionary();
+  const lang = await getLanguage();
   const currentYear = new Date().getFullYear();
 
   return (
@@ -46,9 +48,10 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
               >
                 {t(dict, "layout.journal")}
               </NavLink>
+              <LanguageSwitcher currentLang={lang} />
               <a
                 href={APP_URL}
-                className="ml-2 sm:ml-4 inline-flex items-center px-4 py-2.5 bg-[var(--ink)] text-[var(--paper)] text-sm font-semibold rounded-lg pressable hover:shadow-md"
+                className="ml-1 sm:ml-2 inline-flex items-center px-4 py-2.5 bg-[var(--ink)] text-[var(--paper)] text-sm font-semibold rounded-lg pressable hover:shadow-md"
               >
                 {t(dict, "layout.getStarted")}
               </a>

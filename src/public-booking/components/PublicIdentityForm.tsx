@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { t } from '@/src/lib/i18n/client';
 
 interface PublicIdentityFormProps {
   name: string;
@@ -9,6 +10,7 @@ interface PublicIdentityFormProps {
   onNameChange: (value: string) => void;
   onEmailChange: (value: string) => void;
   onContinue: () => void;
+  dict: unknown;
 }
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -20,6 +22,7 @@ export function PublicIdentityForm({
   onNameChange,
   onEmailChange,
   onContinue,
+  dict,
 }: PublicIdentityFormProps) {
   const [touched, setTouched] = useState({ name: false, email: false });
 
@@ -41,12 +44,12 @@ export function PublicIdentityForm({
     <div className="flex flex-col gap-5">
       <div>
         <label className="block text-sm font-medium mb-1.5 text-[var(--ink)]" htmlFor="customer-name">
-          Full name <span className="text-[#ef4444]">*</span>
+          {t(dict, 'booking.steps.fullName')} <span className="text-[#ef4444]">*</span>
         </label>
         <input
           id="customer-name"
           type="text"
-          placeholder="e.g. Ahmad Fauzi"
+          placeholder={t(dict, 'booking.steps.namePlaceholder')}
           value={name}
           onChange={e => onNameChange(e.target.value)}
           onBlur={() => setTouched(prev => ({ ...prev, name: true }))}
@@ -55,18 +58,18 @@ export function PublicIdentityForm({
           }`}
         />
         {touched.name && !nameValid && (
-          <p className="mt-1.5 text-xs text-[#ef4444]">Please enter your full name.</p>
+          <p className="mt-1.5 text-xs text-[#ef4444]">{t(dict, 'booking.steps.nameError')}</p>
         )}
       </div>
 
       <div>
         <label className="block text-sm font-medium mb-1.5 text-[var(--ink)]" htmlFor="customer-email">
-          Email {emailRequired ? <span className="text-[#ef4444]">*</span> : <span className="text-xs font-normal text-[var(--ink-muted)]">(optional)</span>}
+          {t(dict, 'booking.steps.emailLabel')} {emailRequired ? <span className="text-[#ef4444]">*</span> : <span className="text-xs font-normal text-[var(--ink-muted)]">{t(dict, 'booking.steps.emailOptional')}</span>}
         </label>
         <input
           id="customer-email"
           type="email"
-          placeholder="e.g. ahmad@email.com"
+          placeholder={t(dict, 'booking.steps.emailPlaceholder')}
           value={email}
           onChange={e => onEmailChange(e.target.value)}
           onBlur={() => setTouched(prev => ({ ...prev, email: true }))}
@@ -75,7 +78,7 @@ export function PublicIdentityForm({
           }`}
         />
         {showEmailError && (
-          <p className="mt-1.5 text-xs text-[#ef4444]">Please enter a valid email address.</p>
+          <p className="mt-1.5 text-xs text-[#ef4444]">{t(dict, 'booking.steps.emailError')}</p>
         )}
       </div>
 
@@ -84,7 +87,7 @@ export function PublicIdentityForm({
         disabled={disabled}
         className="w-full py-4 rounded-xl font-semibold text-base mt-2 transition-all bg-[var(--accent)] text-[var(--ink)] disabled:opacity-40 disabled:hover:translate-y-0 pressable"
       >
-        Continue
+        {t(dict, 'booking.steps.continue')}
       </button>
     </div>
   );

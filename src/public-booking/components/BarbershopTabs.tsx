@@ -3,9 +3,8 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { t } from '@/src/lib/i18n/client';
 import { BarbershopInfo, OpenHoursDay } from '@/src/public-booking/actions/booking.actions';
-
-const DAY_LABELS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
 type TabId = 'services' | 'barbers' | 'hours' | 'location';
 
@@ -19,20 +18,20 @@ function formatPrice(price: number) {
   return `Rp${price.toLocaleString('id-ID')}`;
 }
 
-function getTabs(barbershop: BarbershopInfo): Tab[] {
+function getTabs(barbershop: BarbershopInfo, dict: unknown): Tab[] {
   const tabs: Tab[] = [];
 
   if (barbershop.openHours.length > 0) {
-    tabs.push({ id: 'hours', label: 'Hours' });
+    tabs.push({ id: 'hours', label: t(dict, 'barbershopPage.hours') });
   }
 
   tabs.push(
-    { id: 'services', label: 'Services', badge: barbershop.services.length || undefined },
-    { id: 'barbers', label: 'Barbers', badge: barbershop.barbers.length || undefined }
+    { id: 'services', label: t(dict, 'barbershopPage.services'), badge: barbershop.services.length || undefined },
+    { id: 'barbers', label: t(dict, 'barbershopPage.barbers'), badge: barbershop.barbers.length || undefined }
   );
 
   if (barbershop.address) {
-    tabs.push({ id: 'location', label: 'Location' });
+    tabs.push({ id: 'location', label: t(dict, 'barbershopPage.location') });
   }
 
   return tabs;
@@ -43,13 +42,17 @@ interface BarbershopTabsProps {
   barbershop: BarbershopInfo;
   status: { isOpen: boolean; label: string };
   today: number;
+  dict: unknown;
 }
 
-export function BarbershopTabs({ slug, barbershop, status, today }: BarbershopTabsProps) {
-  const tabs = getTabs(barbershop);
+export function BarbershopTabs({ slug, barbershop, status, today, dict }: BarbershopTabsProps) {
+  const tabs = getTabs(barbershop, dict);
   const [activeTab, setActiveTab] = useState<TabId>(tabs[0]?.id || 'services');
 
   const initial = barbershop.name.charAt(0).toUpperCase();
+  const statusLabel = status.isOpen ? t(dict, 'barbershopPage.open') : t(dict, 'barbershopPage.closed');
+  const dictDays = (dict as Record<string, unknown>).barbershopPage as Record<string, unknown> | undefined;
+  const dayLabels: string[] = (dictDays?.days as string[]) ?? ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
   return (
     <div className="min-h-screen flex flex-col pb-28 bg-[var(--paper)]">
@@ -94,7 +97,7 @@ export function BarbershopTabs({ slug, barbershop, status, today }: BarbershopTa
                     status.isOpen ? 'bg-[#22c55e]' : 'bg-[#ef4444]'
                   }`}
                 />
-                {status.label}
+                {statusLabel}
               </span>
             </div>
             {barbershop.description && (
@@ -109,7 +112,7 @@ export function BarbershopTabs({ slug, barbershop, status, today }: BarbershopTa
       {/* Tabs */}
       <div className="sticky top-0 z-30 bg-[var(--paper)]/95 backdrop-blur-sm border-b border-[var(--border)]">
         <div className="max-w-sm mx-auto px-4">
-          <nav aria-label="Barbershop sections" className="flex gap-1 -mb-px overflow-x-auto no-scrollbar">
+          <nav aria-label={t(dict, 'barbershopPage.services')} className="flex gap-1 -mb-px overflow-x-auto no-scrollbar">
             {tabs.map((tab) => (
               <button
                 key={tab.id}
@@ -145,7 +148,7 @@ export function BarbershopTabs({ slug, barbershop, status, today }: BarbershopTa
         <div className="max-w-sm mx-auto w-full">
           {activeTab === 'services' && (
             <section className="animate-fade-in">
-              <h2 className="sr-only">Services</h2>
+              <h2 className="sr-only">{t(dict, 'barbershopPage.services')}</h2>
               {barbershop.services.length > 0 ? (
                 <div className="flex flex-col gap-2">
                   {barbershop.services.map((svc) => {
@@ -185,10 +188,10 @@ export function BarbershopTabs({ slug, barbershop, status, today }: BarbershopTa
               ) : (
                 <div className="p-6 text-center rounded-xl bg-[var(--cream)] border border-[var(--border-soft)]">
                   <p className="text-sm text-[var(--ink-muted)]">
-                    Services coming soon.
+                    {t(dict, 'barbershopPage.servicesComingSoon')}
                   </p>
                   <p className="text-xs text-[var(--ink-muted)] mt-1">
-                    Please contact the shop directly.
+                    {t(dict, 'barbershopPage.contactShop')}
                   </p>
                 </div>
               )}
@@ -197,7 +200,7 @@ export function BarbershopTabs({ slug, barbershop, status, today }: BarbershopTa
 
           {activeTab === 'barbers' && (
             <section className="animate-fade-in">
-              <h2 className="sr-only">Barbers</h2>
+              <h2 className="sr-only">{t(dict, 'barbershopPage.barbers')}</h2>
               {barbershop.barbers.length > 0 ? (
                 <div className="grid grid-cols-2 gap-3">
                   {barbershop.barbers.map((barber) => {
@@ -233,7 +236,7 @@ export function BarbershopTabs({ slug, barbershop, status, today }: BarbershopTa
               ) : (
                 <div className="p-6 text-center rounded-xl bg-[var(--cream)] border border-[var(--border-soft)]">
                   <p className="text-sm text-[var(--ink-muted)]">
-                    Team details coming soon.
+                    {t(dict, 'barbershopPage.teamComingSoon')}
                   </p>
                 </div>
               )}
@@ -242,7 +245,7 @@ export function BarbershopTabs({ slug, barbershop, status, today }: BarbershopTa
 
           {activeTab === 'hours' && (
             <section className="animate-fade-in">
-              <h2 className="sr-only">Opening hours</h2>
+              <h2 className="sr-only">{t(dict, 'barbershopPage.hours')}</h2>
               <div className="rounded-xl overflow-hidden border border-[var(--border-soft)] bg-[var(--cream)]">
                 {barbershop.openHours.map((day: OpenHoursDay) => {
                   const isToday = day.dayOfWeek === today;
@@ -254,7 +257,7 @@ export function BarbershopTabs({ slug, barbershop, status, today }: BarbershopTa
                       }`}
                     >
                       <span className="text-sm font-medium text-[var(--ink)]">
-                        {DAY_LABELS[day.dayOfWeek]}
+                        {dayLabels[day.dayOfWeek]}
                       </span>
                       <span
                         className={`text-sm tabular-nums ${
@@ -263,7 +266,7 @@ export function BarbershopTabs({ slug, barbershop, status, today }: BarbershopTa
                       >
                         {day.isOpen
                           ? `${day.openTime} - ${day.closeTime}`
-                          : 'Closed'}
+                          : statusLabel}
                       </span>
                     </div>
                   );
@@ -274,11 +277,11 @@ export function BarbershopTabs({ slug, barbershop, status, today }: BarbershopTa
 
           {activeTab === 'location' && (
             <section className="animate-fade-in">
-              <h2 className="sr-only">Location</h2>
+              <h2 className="sr-only">{t(dict, 'barbershopPage.location')}</h2>
               {barbershop.address ? (
                 <div className="rounded-2xl p-5 bg-[var(--cream)] border border-[var(--border-soft)]">
                   <div className="flex items-start gap-3">
-                    <span className="text-xl mt-0.5" aria-hidden="true">📍</span>
+                    <span className="text-xl mt-0.5" aria-hidden="true">{'\uD83D\uDCCD'}</span>
                     <div>
                       <p className="text-sm text-[var(--ink)] leading-relaxed">
                         {barbershop.address}
@@ -289,8 +292,8 @@ export function BarbershopTabs({ slug, barbershop, status, today }: BarbershopTa
                         rel="noopener noreferrer"
                         className="inline-flex items-center gap-1 mt-3 text-sm font-semibold text-[var(--accent-dark)] hover:text-[var(--ink)] transition-colors"
                       >
-                        Open in Maps
-                        <span aria-hidden="true">↗</span>
+                        {t(dict, 'barbershopPage.openInMaps')}
+                        <span aria-hidden="true">{'\u2197'}</span>
                       </a>
                     </div>
                   </div>
@@ -298,7 +301,7 @@ export function BarbershopTabs({ slug, barbershop, status, today }: BarbershopTa
               ) : (
                 <div className="p-6 text-center rounded-xl bg-[var(--cream)] border border-[var(--border-soft)]">
                   <p className="text-sm text-[var(--ink-muted)]">
-                    Address not available.
+                    {t(dict, 'barbershopPage.addressNotAvailable')}
                   </p>
                 </div>
               )}
@@ -314,7 +317,7 @@ export function BarbershopTabs({ slug, barbershop, status, today }: BarbershopTa
             href={`/${slug}/booking`}
             className="block w-full py-4 text-center rounded-xl font-semibold text-base bg-[var(--accent)] text-[var(--ink)] pressable shadow-[var(--shadow-accent)]"
           >
-            Book now
+            {t(dict, 'barbershopPage.bookNow')}
           </Link>
         </div>
       </div>
@@ -322,7 +325,7 @@ export function BarbershopTabs({ slug, barbershop, status, today }: BarbershopTa
       {/* Footer badge */}
       <div className="py-4 text-center mt-auto">
         <span className="text-xs text-[var(--ink-muted)]">
-          Powered by{' '}
+          {t(dict, 'barbershopPage.poweredBy')}{' '}
           <span className="font-semibold text-[var(--accent-dark)]">
             cukkr
           </span>

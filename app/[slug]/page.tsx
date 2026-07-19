@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import { getBarbershopInfo, OpenHoursDay } from '@/src/public-booking/actions/booking.actions';
+import { getDictionary } from '@/src/lib/i18n';
 import { BarbershopTabs } from '@/src/public-booking/components/BarbershopTabs';
 
 export async function generateMetadata({
@@ -74,6 +75,7 @@ export default async function BarbershopLandingPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
+  const dict = await getDictionary();
 
   let barbershop;
   try {
@@ -91,6 +93,7 @@ export default async function BarbershopLandingPage({
       barbershop={barbershop}
       status={status}
       today={today}
+      dict={dict}
     />
   );
 }

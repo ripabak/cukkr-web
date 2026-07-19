@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { usePublicBooking } from '@/src/public-booking/context/PublicBookingContext';
 import { validatePin, createWalkIn } from '@/src/public-booking/actions/booking.actions';
 import type { PublicFormData } from '@/src/public-booking/actions/booking.actions';
+import { t } from '@/src/lib/i18n/client';
 import { BookingHeader } from '@/src/public-booking/components/BookingHeader';
 import { PinInput } from '@/src/public-booking/components/PinInput';
 import { PublicIdentityForm } from '@/src/public-booking/components/PublicIdentityForm';
@@ -15,22 +16,6 @@ type Step = 'pin' | 'details' | 'identity' | 'recap' | 'success';
 
 const ORDERED: Step[] = ['pin', 'details', 'identity', 'recap'];
 
-const STEP_TITLES: Record<Step, string> = {
-  pin: 'Enter shop PIN',
-  details: 'Booking details',
-  identity: 'Your information',
-  recap: 'Review booking',
-  success: '',
-};
-
-const STEP_SUBTITLES: Record<Step, string> = {
-  pin: 'Ask your barber for the 4-digit PIN',
-  details: 'Choose your service and barber',
-  identity: 'Just a few details about you',
-  recap: 'Check everything before confirming',
-  success: '',
-};
-
 function formatPrice(price: number) {
   return `Rp${price.toLocaleString('id-ID')}`;
 }
@@ -38,9 +23,10 @@ function formatPrice(price: number) {
 interface Props {
   slug: string;
   formData: PublicFormData;
+  dict: unknown;
 }
 
-export function WalkInBooking({ slug, formData }: Props) {
+export function WalkInBooking({ slug, formData, dict }: Props) {
   const router = useRouter();
   const { state, setPin, setValidationToken, updateIdentity, setServices, setBarber, setNotes, reset } =
     usePublicBooking();
@@ -53,6 +39,21 @@ export function WalkInBooking({ slug, formData }: Props) {
 
   const stepIndex = ORDERED.indexOf(step);
   const currentStepNumber = stepIndex === -1 ? ORDERED.length : stepIndex + 1;
+
+  const stepTitles: Record<Step, string> = {
+    pin: t(dict, 'booking.steps.pin'),
+    details: t(dict, 'booking.steps.details'),
+    identity: t(dict, 'booking.steps.identity'),
+    recap: t(dict, 'booking.steps.recap'),
+    success: '',
+  };
+  const stepSubtitles: Record<Step, string> = {
+    pin: t(dict, 'booking.steps.pinSub'),
+    details: t(dict, 'booking.steps.detailsSub'),
+    identity: t(dict, 'booking.steps.identitySub'),
+    recap: t(dict, 'booking.steps.recapSub'),
+    success: '',
+  };
 
   const handleBack = () => {
     setPinError(null);
@@ -76,7 +77,7 @@ export function WalkInBooking({ slug, formData }: Props) {
         setStep('details');
         window.scrollTo({ top: 0, behavior: 'smooth' });
       } catch (err: unknown) {
-        const message = err instanceof Error ? err.message : 'Invalid PIN. Please try again.';
+        const message = err instanceof Error ? err.message : t(dict, 'booking.walkIn.invalidPin');
         setPinError(message);
       }
     });
@@ -109,7 +110,7 @@ export function WalkInBooking({ slug, formData }: Props) {
         });
         setStep('success');
       } catch (err: unknown) {
-        const message = err instanceof Error ? err.message : 'We could not check you in. Please try again.';
+        const message = err instanceof Error ? err.message : t(dict, 'booking.error.walkInSubmit');
         setSubmitError(message);
       }
     });
@@ -126,24 +127,22 @@ export function WalkInBooking({ slug, formData }: Props) {
               <path d="M8 20L16 28L32 12" stroke="#22c55e" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </div>
-          <h1 className="text-2xl font-bold mb-2 text-[var(--ink)]">You&apos;re checked in</h1>
-          <p className="text-sm mb-8 text-[var(--ink-soft)]">
-            You&apos;re on the queue. Sit back and wait for your name.
-          </p>
+          <h1 className="text-2xl font-bold mb-2 text-[var(--ink)]">{t(dict, 'booking.walkIn.successTitle')}</h1>
+          <p className="text-sm mb-8 text-[var(--ink-soft)]">{t(dict, 'booking.walkIn.successDesc')}</p>
           <div className="rounded-2xl p-4 mb-8 text-left bg-[var(--cream)] border border-[var(--border-soft)]">
             <div className="flex justify-between text-sm mb-2">
-              <span className="text-[var(--ink-muted)]">Name</span>
+              <span className="text-[var(--ink-muted)]">{t(dict, 'booking.recap.name')}</span>
               <span className="font-medium text-[var(--ink)]">{state.identity.name}</span>
             </div>
             {state.identity.email && (
               <div className="flex justify-between text-sm mb-2">
-                <span className="text-[var(--ink-muted)]">Email</span>
+                <span className="text-[var(--ink-muted)]">{t(dict, 'booking.recap.email')}</span>
                 <span className="font-medium text-[var(--ink)]">{state.identity.email}</span>
               </div>
             )}
             {state.barberName && (
               <div className="flex justify-between text-sm">
-                <span className="text-[var(--ink-muted)]">Barber</span>
+                <span className="text-[var(--ink-muted)]">{t(dict, 'booking.recap.barber')}</span>
                 <span className="font-medium text-[var(--ink)]">{state.barberName}</span>
               </div>
             )}
@@ -152,7 +151,7 @@ export function WalkInBooking({ slug, formData }: Props) {
             onClick={() => { reset(); router.push(`/${slug}`); }}
             className="w-full py-4 rounded-xl font-semibold text-base bg-[var(--accent)] text-[var(--ink)] pressable shadow-[var(--shadow-accent)]"
           >
-            Back to home
+            {t(dict, 'booking.walkIn.backToHome')}
           </button>
         </div>
       </div>
@@ -162,8 +161,8 @@ export function WalkInBooking({ slug, formData }: Props) {
   return (
     <div className="min-h-screen flex flex-col bg-[var(--paper)]">
       <BookingHeader
-        title={STEP_TITLES[step]}
-        subtitle={STEP_SUBTITLES[step]}
+        title={stepTitles[step]}
+        subtitle={stepSubtitles[step]}
         onBack={handleBack}
         step={currentStepNumber}
         totalSteps={ORDERED.length}
@@ -186,7 +185,7 @@ export function WalkInBooking({ slug, formData }: Props) {
               disabled={state.pin.length < 4 || isPinPending}
               className="w-full py-4 rounded-xl font-semibold text-base transition-all bg-[var(--accent)] text-[var(--ink)] disabled:opacity-40 disabled:hover:translate-y-0 pressable shadow-[var(--shadow-accent)]"
             >
-              {isPinPending ? 'Verifying...' : 'Verify PIN'}
+              {isPinPending ? t(dict, 'booking.steps.verifying') : t(dict, 'booking.steps.verify')}
             </button>
           </div>
         )}
@@ -195,7 +194,7 @@ export function WalkInBooking({ slug, formData }: Props) {
           <div className="flex flex-col gap-6">
             <div>
               <p className="text-sm font-semibold mb-3 text-[var(--ink)]">
-                Service <span className="text-[#ef4444]">*</span>
+                {t(dict, 'booking.steps.serviceLabel')} <span className="text-[#ef4444]">*</span>
               </p>
               {formData.services.length ? (
                 <ServiceSelector
@@ -205,14 +204,14 @@ export function WalkInBooking({ slug, formData }: Props) {
                 />
               ) : (
                 <div className="text-sm text-[var(--ink-muted)] p-4 rounded-xl bg-[var(--cream)] border border-[var(--border-soft)]">
-                  No services available.
+                  {t(dict, 'booking.steps.noServices')}
                 </div>
               )}
             </div>
 
             <div>
               <p className="text-sm font-semibold mb-3 text-[var(--ink)]">
-                Barber <span className="text-xs font-normal text-[var(--ink-muted)]">(optional)</span>
+                {t(dict, 'booking.steps.barberLabel')} <span className="text-xs font-normal text-[var(--ink-muted)]">{t(dict, 'booking.steps.barberOptional')}</span>
               </p>
               <BarberSelector
                 barbers={formData.barbers}
@@ -223,11 +222,11 @@ export function WalkInBooking({ slug, formData }: Props) {
 
             <div>
               <label className="block text-sm font-semibold mb-1.5 text-[var(--ink)]" htmlFor="walkin-notes">
-                Notes <span className="text-xs font-normal text-[var(--ink-muted)]">(optional)</span>
+                {t(dict, 'booking.steps.notesLabel')} <span className="text-xs font-normal text-[var(--ink-muted)]">{t(dict, 'booking.steps.notesOptional')}</span>
               </label>
               <textarea
                 id="walkin-notes"
-                placeholder="e.g. Clean fade, reference photo available"
+                placeholder={t(dict, 'booking.steps.notesPlaceholder')}
                 value={state.notes}
                 onChange={e => setNotes(e.target.value)}
                 rows={3}
@@ -240,7 +239,7 @@ export function WalkInBooking({ slug, formData }: Props) {
               disabled={state.serviceIds.length === 0}
               className="w-full py-4 rounded-xl font-semibold text-base transition-all bg-[var(--accent)] text-[var(--ink)] disabled:opacity-40 disabled:hover:translate-y-0 pressable shadow-[var(--shadow-accent)]"
             >
-              Continue
+              {t(dict, 'booking.steps.continue')}
             </button>
           </div>
         )}
@@ -253,6 +252,7 @@ export function WalkInBooking({ slug, formData }: Props) {
             onNameChange={value => updateIdentity({ name: value })}
             onEmailChange={value => updateIdentity({ email: value })}
             onContinue={handleIdentityNext}
+            dict={dict}
           />
         )}
 
@@ -260,7 +260,7 @@ export function WalkInBooking({ slug, formData }: Props) {
           <div className="flex flex-col gap-5">
             <div className="rounded-2xl p-4 bg-[var(--cream)] border border-[var(--border-soft)]">
               <p className="text-xs font-semibold uppercase tracking-wider mb-3 text-[var(--ink-muted)]">
-                Services
+                {t(dict, 'booking.recap.services')}
               </p>
               {state.selectedServices.map(s => (
                 <div key={s.id} className="flex justify-between text-sm mb-2">
@@ -269,24 +269,24 @@ export function WalkInBooking({ slug, formData }: Props) {
                 </div>
               ))}
               <div className="flex justify-between text-sm font-bold pt-2 mt-1 border-t border-[var(--border)]">
-                <span className="text-[var(--ink)]">Total</span>
+                <span className="text-[var(--ink)]">{t(dict, 'booking.walkIn.total')}</span>
                 <span className="text-[var(--accent-dark)] tabular-nums">{formatPrice(totalPrice)}</span>
               </div>
             </div>
 
             <div className="rounded-2xl p-4 bg-[var(--cream)] border border-[var(--border-soft)]">
               <p className="text-xs font-semibold uppercase tracking-wider mb-3 text-[var(--ink-muted)]">
-                Preferences
+                {t(dict, 'booking.walkIn.preferences')}
               </p>
               <div className="flex justify-between text-sm mb-2">
-                <span className="text-[var(--ink-soft)]">Barber</span>
+                <span className="text-[var(--ink-soft)]">{t(dict, 'booking.recap.barber')}</span>
                 <span className="font-medium text-[var(--ink)]">
-                  {state.barberName || 'Any available barber'}
+                  {state.barberName || t(dict, 'booking.walkIn.anyBarber')}
                 </span>
               </div>
               {state.notes && (
                 <div className="flex justify-between text-sm">
-                  <span className="text-[var(--ink-soft)]">Notes</span>
+                  <span className="text-[var(--ink-soft)]">{t(dict, 'booking.recap.notes')}</span>
                   <span className="font-medium text-right max-w-[60%] text-[var(--ink)]">
                     {state.notes}
                   </span>
@@ -296,15 +296,15 @@ export function WalkInBooking({ slug, formData }: Props) {
 
             <div className="rounded-2xl p-4 bg-[var(--cream)] border border-[var(--border-soft)]">
               <p className="text-xs font-semibold uppercase tracking-wider mb-3 text-[var(--ink-muted)]">
-                Your details
+                {t(dict, 'booking.walkIn.yourDetails')}
               </p>
               <div className="flex justify-between text-sm mb-2">
-                <span className="text-[var(--ink-soft)]">Name</span>
+                <span className="text-[var(--ink-soft)]">{t(dict, 'booking.recap.name')}</span>
                 <span className="font-medium text-[var(--ink)]">{state.identity.name}</span>
               </div>
               {state.identity.email && (
                 <div className="flex justify-between text-sm">
-                  <span className="text-[var(--ink-soft)]">Email</span>
+                  <span className="text-[var(--ink-soft)]">{t(dict, 'booking.recap.email')}</span>
                   <span className="font-medium text-[var(--ink)]">{state.identity.email}</span>
                 </div>
               )}
@@ -319,7 +319,7 @@ export function WalkInBooking({ slug, formData }: Props) {
               disabled={isSubmitPending}
               className="w-full py-4 rounded-xl font-semibold text-base transition-all bg-[var(--accent)] text-[var(--ink)] disabled:opacity-60 disabled:hover:translate-y-0 pressable shadow-[var(--shadow-accent)]"
             >
-              {isSubmitPending ? 'Checking in...' : 'Confirm walk-in'}
+              {isSubmitPending ? t(dict, 'booking.walkIn.checkingIn') : t(dict, 'booking.walkIn.confirmWalkIn')}
             </button>
           </div>
         )}

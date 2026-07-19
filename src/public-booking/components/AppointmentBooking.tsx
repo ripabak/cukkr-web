@@ -3,6 +3,7 @@
 import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { usePublicBooking } from '@/src/public-booking/context/PublicBookingContext';
+import { t } from '@/src/lib/i18n/client';
 import {
   createAppointment,
   getDateAvailability,
@@ -17,20 +18,6 @@ import { BarberSelector } from '@/src/public-booking/components/BarberSelector';
 type Step = 'details' | 'identity' | 'recap' | 'success';
 
 const ORDERED: Step[] = ['details', 'identity', 'recap'];
-
-const STEP_TITLES: Record<Step, string> = {
-  details: 'Booking details',
-  identity: 'Your information',
-  recap: 'Review booking',
-  success: '',
-};
-
-const STEP_SUBTITLES: Record<Step, string> = {
-  details: 'Choose your service, barber, and schedule',
-  identity: 'Just a few details about you',
-  recap: 'Check everything before confirming',
-  success: '',
-};
 
 const SLOT_INTERVAL = 30;
 
@@ -69,9 +56,10 @@ function formatDisplayDateTime(date: string, time: string) {
 interface Props {
   slug: string;
   formData: PublicFormData;
+  dict: unknown;
 }
 
-export function AppointmentBooking({ slug, formData }: Props) {
+export function AppointmentBooking({ slug, formData, dict }: Props) {
   const router = useRouter();
   const { state, updateIdentity, setServices, setBarber, setNotes, setScheduledAt, reset } =
     usePublicBooking();
@@ -87,6 +75,20 @@ export function AppointmentBooking({ slug, formData }: Props) {
   const stepIndex = ORDERED.indexOf(step);
   const currentStepNumber = stepIndex === -1 ? ORDERED.length : stepIndex + 1;
   const todayStr = new Date().toISOString().split('T')[0];
+
+  const stepTitles: Record<Step, string> = {
+    details: t(dict, 'booking.steps.details'),
+    identity: t(dict, 'booking.steps.identity'),
+    recap: t(dict, 'booking.steps.recap'),
+    success: '',
+  };
+
+  const stepSubtitles: Record<Step, string> = {
+    details: t(dict, 'booking.steps.detailsSub'),
+    identity: t(dict, 'booking.steps.identitySub'),
+    recap: t(dict, 'booking.steps.recapSub'),
+    success: '',
+  };
 
   const timeSlots =
     availability?.isOpen && availability.openTime && availability.closeTime
@@ -148,7 +150,7 @@ export function AppointmentBooking({ slug, formData }: Props) {
         });
         setStep('success');
       } catch (err: unknown) {
-        const message = err instanceof Error ? err.message : 'We could not submit your booking. Please try again.';
+        const message = err instanceof Error ? err.message : t(dict, 'booking.error.submit');
         setSubmitError(message);
       }
     });
@@ -165,18 +167,18 @@ export function AppointmentBooking({ slug, formData }: Props) {
               <path d="M8 20L16 28L32 12" stroke="#22c55e" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </div>
-          <h1 className="text-2xl font-bold mb-2 text-[var(--ink)]">Appointment submitted</h1>
+          <h1 className="text-2xl font-bold mb-2 text-[var(--ink)]">{t(dict, 'booking.appointment.successTitle')}</h1>
           <p className="text-sm mb-8 text-[var(--ink-soft)]">
-            Check your email to confirm your appointment. Your booking will only be processed after verification.
+            {t(dict, 'booking.appointment.successDesc')}
           </p>
           <div className="rounded-2xl p-4 mb-8 text-left bg-[var(--cream)] border border-[var(--border-soft)]">
             <div className="flex justify-between text-sm mb-2">
-              <span className="text-[var(--ink-muted)]">Name</span>
+              <span className="text-[var(--ink-muted)]">{t(dict, 'booking.recap.name')}</span>
               <span className="font-medium text-[var(--ink)]">{state.identity.name}</span>
             </div>
             {state.displayDateTime && (
               <div className="flex justify-between text-sm mb-2">
-                <span className="text-[var(--ink-muted)]">Schedule</span>
+                <span className="text-[var(--ink-muted)]">{t(dict, 'booking.appointment.dateTimeLabel')}</span>
                 <span className="font-medium text-right max-w-[60%] text-[var(--ink)]">
                   {state.displayDateTime}
                 </span>
@@ -184,7 +186,7 @@ export function AppointmentBooking({ slug, formData }: Props) {
             )}
             {state.barberName && (
               <div className="flex justify-between text-sm">
-                <span className="text-[var(--ink-muted)]">Barber</span>
+                <span className="text-[var(--ink-muted)]">{t(dict, 'booking.recap.barber')}</span>
                 <span className="font-medium text-[var(--ink)]">{state.barberName}</span>
               </div>
             )}
@@ -193,7 +195,7 @@ export function AppointmentBooking({ slug, formData }: Props) {
             onClick={() => { reset(); router.push(`/${slug}`); }}
             className="w-full py-4 rounded-xl font-semibold text-base bg-[var(--accent)] text-[var(--ink)] pressable shadow-[var(--shadow-accent)]"
           >
-            Back to home
+            {t(dict, 'booking.appointment.backToHome')}
           </button>
         </div>
       </div>
@@ -203,8 +205,8 @@ export function AppointmentBooking({ slug, formData }: Props) {
   return (
     <div className="min-h-screen flex flex-col bg-[var(--paper)]">
       <BookingHeader
-        title={STEP_TITLES[step]}
-        subtitle={STEP_SUBTITLES[step]}
+        title={stepTitles[step]}
+        subtitle={stepSubtitles[step]}
         onBack={handleBack}
         step={currentStepNumber}
         totalSteps={ORDERED.length}
@@ -215,7 +217,7 @@ export function AppointmentBooking({ slug, formData }: Props) {
           <div className="flex flex-col gap-6">
             <div>
               <p className="text-sm font-semibold mb-3 text-[var(--ink)]">
-                Service <span className="text-[#ef4444]">*</span>
+                {t(dict, 'booking.steps.serviceLabel')} <span className="text-[#ef4444]">*</span>
               </p>
               {formData.services.length ? (
                 <ServiceSelector
@@ -225,14 +227,14 @@ export function AppointmentBooking({ slug, formData }: Props) {
                 />
               ) : (
                 <div className="text-sm text-[var(--ink-muted)] p-4 rounded-xl bg-[var(--cream)] border border-[var(--border-soft)]">
-                  No services available.
+                  {t(dict, 'booking.steps.noServices')}
                 </div>
               )}
             </div>
 
             <div>
               <p className="text-sm font-semibold mb-3 text-[var(--ink)]">
-                Barber <span className="text-xs font-normal text-[var(--ink-muted)]">(optional)</span>
+                {t(dict, 'booking.steps.barberLabel')} <span className="text-xs font-normal text-[var(--ink-muted)]">{t(dict, 'booking.steps.barberOptional')}</span>
               </p>
               <BarberSelector
                 barbers={formData.barbers}
@@ -243,7 +245,7 @@ export function AppointmentBooking({ slug, formData }: Props) {
 
             <div>
               <label className="block text-sm font-semibold mb-1.5 text-[var(--ink)]" htmlFor="booking-date">
-                Date <span className="text-[#ef4444]">*</span>
+                {t(dict, 'booking.steps.dateLabel')} <span className="text-[#ef4444]">*</span>
               </label>
               <input
                 id="booking-date"
@@ -258,7 +260,7 @@ export function AppointmentBooking({ slug, formData }: Props) {
             {dateValue && (
               <div>
                 <label className="block text-sm font-semibold mb-2 text-[var(--ink)]">
-                  Time <span className="text-[#ef4444]">*</span>
+                  {t(dict, 'booking.steps.timeLabel')} <span className="text-[#ef4444]">*</span>
                 </label>
 
                 {isLoadingAvailability && (
@@ -271,7 +273,7 @@ export function AppointmentBooking({ slug, formData }: Props) {
 
                 {!isLoadingAvailability && availability && !availability.isOpen && (
                   <div className="rounded-xl px-4 py-3 text-sm bg-[#fef2f2] border border-[#fecaca] text-[#b91c1c]">
-                    The shop is closed on this date. Please choose another date.
+                    {t(dict, 'booking.steps.closedOnDate')}
                   </div>
                 )}
 
@@ -299,11 +301,11 @@ export function AppointmentBooking({ slug, formData }: Props) {
 
             <div>
               <label className="block text-sm font-semibold mb-1.5 text-[var(--ink)]" htmlFor="booking-notes">
-                Notes <span className="text-xs font-normal text-[var(--ink-muted)]">(optional)</span>
+                {t(dict, 'booking.steps.notesLabel')} <span className="text-xs font-normal text-[var(--ink-muted)]">{t(dict, 'booking.steps.notesOptional')}</span>
               </label>
               <textarea
                 id="booking-notes"
-                placeholder="e.g. Clean fade, reference photo available"
+                placeholder={t(dict, 'booking.steps.notesPlaceholder')}
                 value={state.notes}
                 onChange={e => setNotes(e.target.value)}
                 rows={3}
@@ -316,7 +318,7 @@ export function AppointmentBooking({ slug, formData }: Props) {
               disabled={state.serviceIds.length === 0 || !dateValue || !timeValue}
               className="w-full py-4 rounded-xl font-semibold text-base transition-all bg-[var(--accent)] text-[var(--ink)] disabled:opacity-40 disabled:hover:translate-y-0 pressable shadow-[var(--shadow-accent)]"
             >
-              Continue
+              {t(dict, 'booking.steps.continue')}
             </button>
           </div>
         )}
@@ -329,6 +331,7 @@ export function AppointmentBooking({ slug, formData }: Props) {
             onNameChange={value => updateIdentity({ name: value })}
             onEmailChange={value => updateIdentity({ email: value })}
             onContinue={handleIdentityNext}
+            dict={dict}
           />
         )}
 
@@ -336,25 +339,25 @@ export function AppointmentBooking({ slug, formData }: Props) {
           <div className="flex flex-col gap-5">
             <div className="rounded-2xl p-4 bg-[var(--cream)] border border-[var(--border-soft)]">
               <p className="text-xs font-semibold uppercase tracking-wider mb-3 text-[var(--ink-muted)]">
-                Schedule & preferences
+                {t(dict, 'booking.appointment.scheduleLabel')}
               </p>
               {state.displayDateTime && (
                 <div className="flex justify-between text-sm mb-2">
-                  <span className="text-[var(--ink-soft)]">Date & time</span>
+                  <span className="text-[var(--ink-soft)]">{t(dict, 'booking.appointment.dateTimeLabel')}</span>
                   <span className="font-medium text-right max-w-[60%] text-[var(--ink)]">
                     {state.displayDateTime}
                   </span>
                 </div>
               )}
               <div className="flex justify-between text-sm mb-2">
-                <span className="text-[var(--ink-soft)]">Barber</span>
+                <span className="text-[var(--ink-soft)]">{t(dict, 'booking.recap.barber')}</span>
                 <span className="font-medium text-[var(--ink)]">
-                  {state.barberName || 'Any available barber'}
+                  {state.barberName || t(dict, 'booking.appointment.anyBarber')}
                 </span>
               </div>
               {state.notes && (
                 <div className="flex justify-between text-sm">
-                  <span className="text-[var(--ink-soft)]">Notes</span>
+                  <span className="text-[var(--ink-soft)]">{t(dict, 'booking.recap.notes')}</span>
                   <span className="font-medium text-right max-w-[60%] text-[var(--ink)]">
                     {state.notes}
                   </span>
@@ -364,7 +367,7 @@ export function AppointmentBooking({ slug, formData }: Props) {
 
             <div className="rounded-2xl p-4 bg-[var(--cream)] border border-[var(--border-soft)]">
               <p className="text-xs font-semibold uppercase tracking-wider mb-3 text-[var(--ink-muted)]">
-                Services
+                {t(dict, 'booking.recap.services')}
               </p>
               {state.selectedServices.map(s => (
                 <div key={s.id} className="flex justify-between text-sm mb-2">
@@ -373,22 +376,22 @@ export function AppointmentBooking({ slug, formData }: Props) {
                 </div>
               ))}
               <div className="flex justify-between text-sm font-bold pt-2 mt-1 border-t border-[var(--border)]">
-                <span className="text-[var(--ink)]">Total</span>
+                <span className="text-[var(--ink)]">{t(dict, 'booking.appointment.total')}</span>
                 <span className="text-[var(--accent-dark)] tabular-nums">{formatPrice(totalPrice)}</span>
               </div>
             </div>
 
             <div className="rounded-2xl p-4 bg-[var(--cream)] border border-[var(--border-soft)]">
               <p className="text-xs font-semibold uppercase tracking-wider mb-3 text-[var(--ink-muted)]">
-                Your details
+                {t(dict, 'booking.appointment.yourDetails')}
               </p>
               <div className="flex justify-between text-sm mb-2">
-                <span className="text-[var(--ink-soft)]">Name</span>
+                <span className="text-[var(--ink-soft)]">{t(dict, 'booking.recap.name')}</span>
                 <span className="font-medium text-[var(--ink)]">{state.identity.name}</span>
               </div>
               {state.identity.email && (
                 <div className="flex justify-between text-sm">
-                  <span className="text-[var(--ink-soft)]">Email</span>
+                  <span className="text-[var(--ink-soft)]">{t(dict, 'booking.recap.email')}</span>
                   <span className="font-medium text-[var(--ink)]">{state.identity.email}</span>
                 </div>
               )}
@@ -401,7 +404,7 @@ export function AppointmentBooking({ slug, formData }: Props) {
                 <circle cx="8" cy="11" r="0.75" fill="var(--accent-dark)" />
               </svg>
               <span className="text-[var(--ink-soft)]">
-                Your appointment needs barber confirmation before it&apos;s active.
+                {t(dict, 'booking.appointment.appointmentNote')}
               </span>
             </div>
 
@@ -414,7 +417,7 @@ export function AppointmentBooking({ slug, formData }: Props) {
               disabled={isSubmitPending}
               className="w-full py-4 rounded-xl font-semibold text-base transition-all bg-[var(--accent)] text-[var(--ink)] disabled:opacity-60 disabled:hover:translate-y-0 pressable shadow-[var(--shadow-accent)]"
             >
-              {isSubmitPending ? 'Submitting...' : 'Confirm appointment'}
+              {isSubmitPending ? t(dict, 'booking.appointment.submitting') : t(dict, 'booking.appointment.confirmAppointment')}
             </button>
           </div>
         )}

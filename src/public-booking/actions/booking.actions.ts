@@ -1,9 +1,21 @@
 'use server';
 
+import { cookies } from 'next/headers';
+
 function getBase() {
   const base = process.env.API_URL ?? process.env.NEXT_PUBLIC_API_URL;
   if (!base) throw new Error('API_URL is not set');
   return base.replace(/\/$/, '');
+}
+
+async function getLang(): Promise<string> {
+  try {
+    const cookieStore = await cookies();
+    const langCookie = cookieStore.get('cukkr_lang');
+    return langCookie?.value === 'en' ? 'en' : 'id';
+  } catch {
+    return 'id';
+  }
 }
 
 async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> {
@@ -90,10 +102,11 @@ export async function createWalkIn(
     notes: string | null;
   },
 ): Promise<void> {
+  const lang = await getLang();
   await apiFetch(`/api/public/booking/${slug}/walk-in`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload),
+    body: JSON.stringify({ ...payload, lang }),
   });
 }
 
@@ -108,10 +121,11 @@ export async function createAppointment(
     notes: string | null;
   },
 ): Promise<void> {
+  const lang = await getLang();
   await apiFetch(`/api/public/booking/${slug}/appointment`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload),
+    body: JSON.stringify({ ...payload, lang }),
   });
 }
 

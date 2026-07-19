@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { fetchAPI } from "@/lib/strapi";
+import { getDictionary, t } from "@/src/lib/i18n";
 
 async function getCategories() {
   try {
@@ -38,6 +39,7 @@ export default async function ArticleListPage({ searchParams }: { searchParams: 
   const resolvedSearchParams = await searchParams;
   const currentPage = Number(resolvedSearchParams.page) || 1;
   const currentCategory = resolvedSearchParams.category;
+  const dict = await getDictionary();
 
   const [{ data: articles, meta }, categories] = await Promise.all([
     getArticles(currentPage, currentCategory),
@@ -52,14 +54,14 @@ export default async function ArticleListPage({ searchParams }: { searchParams: 
           <div className="flex items-start gap-3 mb-4">
             <span className="w-6 h-[2px] bg-[var(--accent)] mt-2.5" />
             <span className="text-xs font-semibold tracking-widest uppercase text-[var(--ink-muted)]">
-              Journal
+              {t(dict, "journal.tagline")}
             </span>
           </div>
           <h1 className="font-[family-name:var(--font-serif)] text-5xl md:text-6xl font-bold tracking-tight text-[var(--ink)] leading-[1] text-balance">
-            Articles
+            {t(dict, "journal.heading")}
           </h1>
           <p className="text-lg text-[var(--ink-soft)] mt-4 max-w-xl leading-relaxed text-balance">
-            Insights, updates, and stories from the team building Cukkr — for barbershop owners and the people behind the chair.
+            {t(dict, "journal.description")}
           </p>
         </div>
       </div>
@@ -70,7 +72,7 @@ export default async function ArticleListPage({ searchParams }: { searchParams: 
         <aside className="w-full md:w-52 shrink-0 flex flex-col gap-8">
           <div>
             <h2 className="text-xs font-semibold uppercase tracking-widest text-[var(--ink-muted)] mb-4">
-              Categories
+              {t(dict, "journal.categories")}
             </h2>
             <ul className="flex flex-col gap-2">
               <li>
@@ -82,7 +84,7 @@ export default async function ArticleListPage({ searchParams }: { searchParams: 
                       : 'text-[var(--ink-soft)] hover:bg-[var(--border-soft)] hover:text-[var(--ink)]'
                   }`}
                 >
-                  All categories
+                  {t(dict, "journal.allCategories")}
                 </Link>
               </li>
               {categories.map((cat: { documentId?: string; id?: string; slug?: string; name?: string; title?: string }) => (
@@ -108,8 +110,8 @@ export default async function ArticleListPage({ searchParams }: { searchParams: 
         <div className="flex-grow flex flex-col gap-0">
           {articles.length === 0 ? (
             <div className="py-16 px-6 text-center border border-dashed border-[var(--border)] rounded-2xl bg-[var(--cream)]">
-              <p className="text-[var(--ink-muted)] font-medium">No articles found.</p>
-              <p className="text-sm text-[var(--ink-muted)] mt-1">Check back soon for new stories.</p>
+              <p className="text-[var(--ink-muted)] font-medium">{t(dict, "journal.noArticles")}</p>
+              <p className="text-sm text-[var(--ink-muted)] mt-1">{t(dict, "journal.checkBack")}</p>
             </div>
           ) : (
             articles.map((article: {
@@ -141,7 +143,7 @@ export default async function ArticleListPage({ searchParams }: { searchParams: 
                       <div className="w-full md:w-36 shrink-0 pt-1">
                         <p className="text-sm font-mono text-[var(--ink-muted)] tabular-nums">{formattedDate}</p>
                         <span className="inline-block mt-2 text-xs font-semibold uppercase tracking-wider text-[var(--accent-dark)] bg-[var(--gold-surface)] px-2 py-1 rounded">
-                          {category?.name || category?.title || 'Uncategorized'}
+                          {category?.name || category?.title || t(dict, "journal.uncategorized")}
                         </span>
                       </div>
                       <div className="flex-grow flex flex-col gap-3">
@@ -165,7 +167,7 @@ export default async function ArticleListPage({ searchParams }: { searchParams: 
                         )}
 
                         <span className="text-sm font-semibold mt-2 opacity-0 group-hover:opacity-100 transition-opacity text-[var(--accent-dark)] flex items-center gap-2">
-                          Read article <span className="text-lg leading-none" aria-hidden="true">→</span>
+                          {t(dict, "journal.readArticle")} <span className="text-lg leading-none" aria-hidden="true">→</span>
                         </span>
                       </div>
                     </div>
@@ -181,12 +183,12 @@ export default async function ArticleListPage({ searchParams }: { searchParams: 
               {meta.pagination.page > 1 ? (
                 <Link href={`/article?page=${meta.pagination.page - 1}${currentCategory ? `&category=${currentCategory}` : ''}`} className="w-10 h-10 flex items-center justify-center rounded-lg bg-[var(--border-soft)] hover:bg-[var(--border)] transition-colors text-[var(--ink)]">
                   <span aria-hidden="true">←</span>
-                  <span className="sr-only">Previous page</span>
+                  <span className="sr-only">{t(dict, "journal.previousPage")}</span>
                 </Link>
               ) : (
                 <button className="w-10 h-10 flex items-center justify-center rounded-lg bg-[var(--border-soft)] text-[var(--ink-muted)] opacity-60 cursor-not-allowed" disabled>
                   <span aria-hidden="true">←</span>
-                  <span className="sr-only">Previous page</span>
+                  <span className="sr-only">{t(dict, "journal.previousPage")}</span>
                 </button>
               )}
 
@@ -211,12 +213,12 @@ export default async function ArticleListPage({ searchParams }: { searchParams: 
               {meta.pagination.page < meta.pagination.pageCount ? (
                 <Link href={`/article?page=${meta.pagination.page + 1}${currentCategory ? `&category=${currentCategory}` : ''}`} className="w-10 h-10 flex items-center justify-center rounded-lg bg-[var(--border-soft)] hover:bg-[var(--accent)] hover:text-[var(--ink)] transition-colors text-[var(--ink)]">
                   <span aria-hidden="true">→</span>
-                  <span className="sr-only">Next page</span>
+                  <span className="sr-only">{t(dict, "journal.nextPage")}</span>
                 </Link>
               ) : (
                 <button className="w-10 h-10 flex items-center justify-center rounded-lg bg-[var(--border-soft)] text-[var(--ink-muted)] opacity-60 cursor-not-allowed" disabled>
                   <span aria-hidden="true">→</span>
-                  <span className="sr-only">Next page</span>
+                  <span className="sr-only">{t(dict, "journal.nextPage")}</span>
                 </button>
               )}
             </nav>

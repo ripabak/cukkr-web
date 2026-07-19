@@ -1,23 +1,27 @@
-export default function TermsPage() {
+import { getDictionary, t } from "@/src/lib/i18n";
+
+export default async function TermsPage() {
+  const dict = await getDictionary();
+
   return (
     <div className="flex flex-col w-full max-w-[1200px] mx-auto px-6 lg:px-8 gap-16 lg:gap-20 min-h-[60vh] pb-24">
       <div className="flex flex-col gap-8 max-w-3xl mt-12 lg:mt-20">
         <div className="flex items-start gap-3">
           <span className="w-6 h-[2px] bg-[var(--accent)] mt-2.5" />
           <span className="text-xs font-semibold tracking-widest uppercase text-[var(--ink-muted)]">
-            Legal
+            {t(dict, "terms.tagline")}
           </span>
         </div>
         <h1 className="font-[family-name:var(--font-serif)] text-5xl lg:text-7xl font-bold tracking-tight text-[var(--ink)] leading-[1] text-balance">
-          Terms of
+          {t(dict, "terms.heading1")}
           <br />
           <span className="relative inline-block">
-            <span className="relative z-10">service</span>
+            <span className="relative z-10">{t(dict, "terms.heading2")}</span>
             <span className="absolute bottom-2 left-0 w-full h-3 bg-[var(--accent)] -z-0 opacity-80" />
           </span>
         </h1>
         <p className="text-sm text-[var(--ink-soft)]">
-          Last updated: June 10, 2026
+          {t(dict, "terms.lastUpdated")}
         </p>
       </div>
 

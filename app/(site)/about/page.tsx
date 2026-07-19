@@ -2,8 +2,9 @@ import { getDictionary, t } from "@/src/lib/i18n";
 
 export default async function AboutPage() {
   const dict = await getDictionary();
-
-  const values = t(dict, "about.values") as unknown as { label: string; desc: string }[];
+  const d = dict as Record<string, Record<string, unknown>>;
+  const about = d.about as Record<string, unknown>;
+  const values = (about.values as { label: string; desc: string }[]) ?? [];
 
   return (
     <div className="flex flex-col w-full max-w-[1200px] mx-auto px-6 lg:px-8 gap-16 lg:gap-24 min-h-[60vh] pb-24">

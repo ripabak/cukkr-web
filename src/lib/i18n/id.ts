@@ -247,6 +247,10 @@ const id = {
       invalidDesc: 'Link verifikasi ini tidak valid atau sudah kedaluwarsa.',
     },
     identity: {
+      confirmTitle: 'Konfirmasi Identitas',
+      confirmHeading: 'Apakah ini kamu, {customerName}?',
+      confirmBody: 'Klik tombol di bawah untuk mengonfirmasi bahwa ini memang kamu.',
+      confirmCta: 'Ya, ini saya',
       title: 'Verifikasi Identitas',
       verifying: 'Memverifikasi identitas...',
       verified: 'Identitas terverifikasi!',

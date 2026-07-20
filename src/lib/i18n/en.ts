@@ -247,6 +247,10 @@ const en = {
       invalidDesc: 'This verification link is invalid or has expired.',
     },
     identity: {
+      confirmTitle: 'Confirm Identity',
+      confirmHeading: 'Is this you, {customerName}?',
+      confirmBody: 'Click the button below to confirm this is you.',
+      confirmCta: "Yes, it's me",
       title: 'Identity Verification',
       verifying: 'Verifying identity...',
       verified: 'Identity verified!',

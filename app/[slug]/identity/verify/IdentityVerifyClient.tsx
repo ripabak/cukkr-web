@@ -1,41 +1,81 @@
 'use client';
 
 import { useParams, useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
-import { verifyIdentity } from '@/src/public-booking/actions/booking.actions';
+import { useEffect, useState, useCallback } from 'react';
+import { checkIdentity, verifyIdentity } from '@/src/public-booking/actions/booking.actions';
 import { t } from '@/src/lib/i18n/client';
 
-type Status = 'loading' | 'success' | 'alreadyVerified' | 'error';
+type Status = 'checking' | 'confirm' | 'loading' | 'success' | 'alreadyVerified' | 'error';
 
 export function IdentityVerifyClient({ dict }: { dict: unknown }) {
   const { slug } = useParams<{ slug: string }>();
   const searchParams = useSearchParams();
   const token = searchParams.get('token') ?? '';
-  const [status, setStatus] = useState<Status>(token ? 'loading' : 'error');
+  const [status, setStatus] = useState<Status>(token ? 'checking' : 'error');
+  const [customerName, setCustomerName] = useState('');
 
   useEffect(() => {
     if (!token) return;
     let cancelled = false;
 
-    async function verify() {
+    async function check() {
       try {
-        const result = await verifyIdentity(slug, token);
+        const result = await checkIdentity(slug, token);
         if (cancelled) return;
-        if (result.status === 'verified') setStatus('success');
-        else if (result.status === 'already_verified') setStatus('alreadyVerified');
-        else setStatus('error');
+        if (result.valid && result.customerName) {
+          setCustomerName(result.customerName);
+          setStatus('confirm');
+        } else {
+          setStatus('error');
+        }
       } catch {
         if (!cancelled) setStatus('error');
       }
     }
 
-    verify();
+    check();
     return () => { cancelled = true; };
+  }, [slug, token]);
+
+  const handleConfirm = useCallback(async () => {
+    setStatus('loading');
+    try {
+      const result = await verifyIdentity(slug, token);
+      if (result.status === 'verified') setStatus('success');
+      else if (result.status === 'already_verified') setStatus('alreadyVerified');
+      else setStatus('error');
+    } catch {
+      setStatus('error');
+    }
   }, [slug, token]);
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center px-4 py-12 bg-[var(--paper)]">
       <div className="w-full max-w-sm text-center">
+        {status === 'checking' && (
+          <>
+            <div className="w-12 h-12 border-4 border-[var(--border)] border-t-[var(--accent)] rounded-full animate-spin mx-auto mb-6" />
+            <h1 className="text-xl font-bold mb-2 text-[var(--ink)]">{t(dict, 'booking.identity.verifying')}</h1>
+            <p className="text-sm text-[var(--ink-soft)]">{t(dict, 'booking.identity.verifyingDesc')}</p>
+          </>
+        )}
+        {status === 'confirm' && (
+          <>
+            <div className="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 bg-[var(--surface)]">
+              <svg width="40" height="40" viewBox="0 0 40 40" fill="none" aria-hidden="true">
+                <path d="M20 12V22M20 28H20.02" stroke="var(--accent)" strokeWidth="3.5" strokeLinecap="round" />
+              </svg>
+            </div>
+            <h1 className="text-2xl font-bold mb-2 text-[var(--ink)]">{t(dict, 'booking.identity.confirmHeading', { customerName })}</h1>
+            <p className="text-sm mb-8 text-[var(--ink-soft)]">{t(dict, 'booking.identity.confirmBody')}</p>
+            <button
+              onClick={handleConfirm}
+              className="inline-block px-6 py-3 rounded-xl font-semibold text-sm bg-[var(--accent)] text-[var(--ink)] pressable shadow-[var(--shadow-accent)] no-underline border-none cursor-pointer"
+            >
+              {t(dict, 'booking.identity.confirmCta')}
+            </button>
+          </>
+        )}
         {status === 'loading' && (
           <>
             <div className="w-12 h-12 border-4 border-[var(--border)] border-t-[var(--accent)] rounded-full animate-spin mx-auto mb-6" />

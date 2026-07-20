@@ -142,6 +142,18 @@ export async function verifyAppointment(
   );
 }
 
+export async function checkIdentity(
+  slug: string,
+  token: string,
+): Promise<{
+  valid: boolean;
+  customerName: string | null;
+}> {
+  return apiFetch(
+    `/api/public/booking/${slug}/identity/check?token=${token}`,
+  );
+}
+
 export async function verifyIdentity(
   slug: string,
   token: string,

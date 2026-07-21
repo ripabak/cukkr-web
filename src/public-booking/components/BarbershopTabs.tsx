@@ -202,7 +202,7 @@ export function BarbershopTabs({ slug, barbershop, status, today, dict }: Barber
                         onClick={() => setModalService(svc)}
                         className="group text-left rounded-2xl bg-[var(--paper)] border border-[var(--border)] overflow-hidden shadow-[var(--shadow-sm)] hover:shadow-[var(--shadow-md)] pressable"
                       >
-                        <div className="relative aspect-[4/3] w-full bg-[var(--border-soft)]">
+                        <div className="relative aspect-square w-full bg-[var(--border-soft)]">
                           {svc.imageUrl ? (
                             <Image
                               src={svc.imageThumb ?? svc.imageUrl}
@@ -231,7 +231,7 @@ export function BarbershopTabs({ slug, barbershop, status, today, dict }: Barber
                           </p>
                           <div className="flex items-end justify-between">
                             <div className="flex flex-col">
-                              <span className="font-bold text-sm text-[var(--ink)] tabular-nums">
+                              <span className="font-bold text-sm text-[var(--accent-dark)] tabular-nums">
                                 {formatPrice(finalPrice)}
                               </span>
                               {hasDiscount && (

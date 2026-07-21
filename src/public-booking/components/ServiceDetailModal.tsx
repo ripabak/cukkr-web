@@ -110,7 +110,7 @@ export function ServiceDetailModal({ service, slug, dict, onClose }: ServiceDeta
           </svg>
         </button>
 
-        <div className="relative aspect-video w-full bg-[var(--border-soft)]">
+        <div className="relative aspect-square w-full bg-[var(--border-soft)]">
           {service.imageUrl ? (
             <Image
               src={service.imageUrl}
@@ -145,7 +145,7 @@ export function ServiceDetailModal({ service, slug, dict, onClose }: ServiceDeta
 
           <div className="flex items-center gap-3 mb-5">
             <div className="flex flex-col">
-              <span className="font-bold text-lg text-[var(--ink)] tabular-nums">
+              <span className="font-bold text-lg text-[var(--accent-dark)] tabular-nums">
                 {formatPrice(finalPrice)}
               </span>
               {hasDiscount && (

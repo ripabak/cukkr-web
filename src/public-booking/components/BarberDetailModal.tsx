@@ -100,6 +100,7 @@ export function BarberDetailModal({ barber, slug, dict, onClose }: BarberDetailM
               alt={barber.name}
               width={112}
               height={112}
+              unoptimized
               className="w-28 h-28 rounded-3xl object-cover mb-5 shadow-[var(--shadow-md)]"
             />
           ) : (

@@ -117,6 +117,7 @@ export function ServiceDetailModal({ service, slug, dict, onClose }: ServiceDeta
               alt={service.name}
               fill
               sizes="480px"
+              unoptimized
               className="object-cover"
               priority
             />

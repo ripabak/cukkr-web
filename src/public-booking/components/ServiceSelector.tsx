@@ -63,6 +63,7 @@ export function ServiceSelector({ services, selected, onChange }: ServiceSelecto
                 alt={service.name}
                 width={44}
                 height={44}
+                unoptimized
                 className="w-11 h-11 rounded-xl object-cover flex-shrink-0"
               />
             ) : (

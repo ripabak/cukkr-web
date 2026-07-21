@@ -108,6 +108,7 @@ export function BarbershopTabs({ slug, barbershop, status, today, dict }: Barber
                 alt={barbershop.name}
                 width={96}
                 height={96}
+                unoptimized
                 className="w-24 h-24 rounded-2xl object-cover shadow-[var(--shadow-sm)]"
               />
             ) : (
@@ -209,6 +210,7 @@ export function BarbershopTabs({ slug, barbershop, status, today, dict }: Barber
                               alt={svc.name}
                               fill
                               sizes="(max-width: 768px) 50vw, 220px"
+                              unoptimized
                               className="object-cover"
                             />
                           ) : (
@@ -281,6 +283,7 @@ export function BarbershopTabs({ slug, barbershop, status, today, dict }: Barber
                             alt={barber.name}
                             width={64}
                             height={64}
+                            unoptimized
                             className="w-16 h-16 rounded-2xl object-cover flex-shrink-0 shadow-[var(--shadow-sm)]"
                           />
                         ) : (

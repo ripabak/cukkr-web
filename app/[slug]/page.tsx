@@ -47,19 +47,47 @@ export async function generateMetadata({
   }
 }
 
-function getCurrentDayStatus(openHours: OpenHoursDay[]): {
+function getLocalBarbershopTime(timezone: string): {
+  dayOfWeek: number;
+  hours: number;
+  minutes: number;
+} {
+  const now = new Date();
+  const dayMap: Record<string, number> = {
+    Sun: 0, Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6,
+  };
+  const parts = new Intl.DateTimeFormat('en-US', {
+    timeZone: timezone,
+    weekday: 'short',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+  }).formatToParts(now);
+
+  let dayOfWeek = now.getDay();
+  let hours = 0;
+  let minutes = 0;
+  for (const p of parts) {
+    if (p.type === 'weekday') dayOfWeek = dayMap[p.value] ?? dayOfWeek;
+    else if (p.type === 'hour') hours = parseInt(p.value);
+    else if (p.type === 'minute') minutes = parseInt(p.value);
+  }
+
+  return { dayOfWeek, hours, minutes };
+}
+
+function getCurrentDayStatus(openHours: OpenHoursDay[], timezone: string): {
   isOpen: boolean;
   label: string;
 } {
-  const now = new Date();
-  const today = now.getDay();
-  const todayHours = openHours.find((h) => h.dayOfWeek === today);
+  const local = getLocalBarbershopTime(timezone);
+  const todayHours = openHours.find((h) => h.dayOfWeek === local.dayOfWeek);
 
   if (!todayHours || !todayHours.isOpen || !todayHours.openTime || !todayHours.closeTime) {
     return { isOpen: false, label: 'Closed' };
   }
 
-  const currentMinutes = now.getHours() * 60 + now.getMinutes();
+  const currentMinutes = local.hours * 60 + local.minutes;
   const [openH, openM] = todayHours.openTime.split(':').map(Number);
   const [closeH, closeM] = todayHours.closeTime.split(':').map(Number);
   const openMinutes = openH * 60 + openM;
@@ -84,8 +112,8 @@ export default async function BarbershopLandingPage({
     notFound();
   }
 
-  const status = getCurrentDayStatus(barbershop.openHours);
-  const today = new Date().getDay();
+  const status = getCurrentDayStatus(barbershop.openHours, barbershop.timezone);
+  const today = getLocalBarbershopTime(barbershop.timezone).dayOfWeek;
 
   return (
     <BarberShopPageClient

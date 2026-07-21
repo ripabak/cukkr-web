@@ -72,6 +72,7 @@ export interface BarbershopInfo {
   logoThumb?: string | null;
   logoMed?: string | null;
   logoFull?: string | null;
+  timezone: string;
   services: PublicService[];
   barbers: PublicBarber[];
   openHours: OpenHoursDay[];

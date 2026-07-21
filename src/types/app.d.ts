@@ -492,6 +492,7 @@ export declare const app: Elysia<"", {
                             logoMed: string | null;
                             logoFull: string | null;
                             onboardingCompleted: boolean;
+                            lastSlugChangedAt: string | null;
                             timezone: string;
                         };
                         status: string | number;
@@ -546,6 +547,7 @@ export declare const app: Elysia<"", {
                                 logoMed: string | null;
                                 logoFull: string | null;
                                 onboardingCompleted: boolean;
+                                lastSlugChangedAt: string | null;
                                 timezone: string;
                             };
                             status: string | number;
@@ -3821,9 +3823,11 @@ export declare const app: Elysia<"", {
                                         imageUrl: string | null;
                                         isDefault: boolean;
                                     }[];
+                                    timezone: string;
                                     barbers: {
                                         id: string;
                                         name: string;
+                                        bio: string | null;
                                         avatarUrl: string | null;
                                         avatarThumb: string | null;
                                     }[];

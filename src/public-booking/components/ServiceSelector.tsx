@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { PublicSelectedService } from '../context/PublicBookingContext';
 import { PublicService } from '../actions/booking.actions';
 
@@ -49,14 +50,30 @@ export function ServiceSelector({ services, selected, onChange }: ServiceSelecto
             key={service.id}
             type="button"
             onClick={() => toggle(service)}
-            className={`flex items-center justify-between p-4 rounded-xl text-left transition-all duration-200 pressable ${
+            className={`flex items-center gap-3 p-3 rounded-xl text-left transition-all duration-200 pressable ${
               isSelected
                 ? 'border-2 border-[var(--accent)] bg-[var(--gold-surface)]'
                 : 'border-2 border-[var(--border)] bg-[var(--paper)] hover:border-[var(--accent)]/50 hover:bg-[var(--cream)]'
             }`}
             aria-pressed={isSelected}
           >
-            <div className="flex items-center gap-3">
+            {service.imageUrl ? (
+              <Image
+                src={service.imageUrl}
+                alt={service.name}
+                width={44}
+                height={44}
+                unoptimized
+                className="w-11 h-11 rounded-xl object-cover flex-shrink-0"
+              />
+            ) : (
+              <div className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 bg-[var(--border-soft)]">
+                <span className="text-base text-[var(--ink-muted)]">
+                  {'\u2702'}
+                </span>
+              </div>
+            )}
+            <div className="flex items-center gap-3 flex-1 min-w-0">
               <div
                 className={`w-5 h-5 rounded-md flex items-center justify-center flex-shrink-0 transition-colors ${
                   isSelected
@@ -70,12 +87,12 @@ export function ServiceSelector({ services, selected, onChange }: ServiceSelecto
                   </svg>
                 )}
               </div>
-              <span className="font-medium text-sm text-[var(--ink)]">
+              <span className="font-medium text-sm text-[var(--ink)] truncate">
                 {service.name}
               </span>
             </div>
 
-            <div className="text-right">
+            <div className="text-right flex-shrink-0">
               <span className={`font-bold text-sm tabular-nums ${isSelected ? 'text-[var(--accent-dark)]' : 'text-[var(--ink)]'}`}>
                 {discountedPrice !== null ? formatPrice(discountedPrice) : formatPrice(service.price)}
               </span>

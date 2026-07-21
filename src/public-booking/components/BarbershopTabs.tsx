@@ -159,27 +159,45 @@ export function BarbershopTabs({ slug, barbershop, status, today, dict }: Barber
                     return (
                       <div
                         key={svc.id}
-                        className="flex items-center justify-between p-4 rounded-xl bg-[var(--cream)] border border-[var(--border-soft)]"
+                        className="flex items-center gap-3 p-3 rounded-xl bg-[var(--cream)] border border-[var(--border-soft)]"
                       >
-                        <div>
-                          <span className="font-medium text-sm text-[var(--ink)]">
-                            {svc.name}
-                          </span>
-                          {svc.duration != null && svc.duration > 0 && (
-                            <span className="ml-2 text-xs text-[var(--ink-muted)]">
-                              {svc.duration} min
+                        {svc.imageUrl ? (
+                          <Image
+                            src={svc.imageUrl}
+                            alt={svc.name}
+                            width={48}
+                            height={48}
+                            unoptimized
+                            className="w-12 h-12 rounded-xl object-cover flex-shrink-0"
+                          />
+                        ) : (
+                          <div className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 bg-[var(--border-soft)]">
+                            <span className="text-lg text-[var(--ink-muted)]">
+                              {'\u2702'}
                             </span>
-                          )}
-                        </div>
-                        <div className="text-right">
-                          <span className="font-semibold text-sm text-[var(--ink)] tabular-nums">
-                            {formatPrice(finalPrice)}
-                          </span>
-                          {hasDiscount && (
-                            <div className="text-xs line-through text-[var(--ink-muted)] tabular-nums">
-                              {formatPrice(svc.price)}
-                            </div>
-                          )}
+                          </div>
+                        )}
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-baseline gap-2">
+                            <span className="font-medium text-sm text-[var(--ink)] truncate">
+                              {svc.name}
+                            </span>
+                            {svc.duration != null && svc.duration > 0 && (
+                              <span className="text-xs text-[var(--ink-muted)] flex-shrink-0">
+                                {svc.duration} min
+                              </span>
+                            )}
+                          </div>
+                          <div className="flex items-baseline gap-2 mt-0.5">
+                            <span className="font-semibold text-sm text-[var(--ink)] tabular-nums">
+                              {formatPrice(finalPrice)}
+                            </span>
+                            {hasDiscount && (
+                              <span className="text-xs line-through text-[var(--ink-muted)] tabular-nums">
+                                {formatPrice(svc.price)}
+                              </span>
+                            )}
+                          </div>
                         </div>
                       </div>
                     );

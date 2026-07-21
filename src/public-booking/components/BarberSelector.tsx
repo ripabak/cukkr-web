@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { PublicBarber } from '../actions/booking.actions';
 
 interface BarberSelectorProps {
@@ -40,14 +41,13 @@ export function BarberSelector({ barbers, selectedId, onChange }: BarberSelector
             {barber.id === null ? (
               <span className="text-base" aria-hidden="true">✨</span>
             ) : (barber as PublicBarber).avatarUrl ? (
-              <>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={(barber as PublicBarber).avatarUrl!}
-                  alt={barber.name}
-                  className="w-6 h-6 rounded-lg object-cover"
-                />
-              </>
+              <Image
+                src={(barber as PublicBarber).avatarThumb ?? (barber as PublicBarber).avatarUrl!}
+                alt={barber.name}
+                width={24}
+                height={24}
+                className="w-6 h-6 rounded-lg object-cover"
+              />
             ) : (
               <div className={`w-6 h-6 rounded-lg flex items-center justify-center text-xs font-bold ${
                 isSelected ? 'bg-[var(--accent)] text-[var(--ink)]' : 'bg-[var(--border-soft)] text-[var(--ink-muted)]'

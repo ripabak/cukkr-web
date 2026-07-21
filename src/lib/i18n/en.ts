@@ -288,6 +288,12 @@ const en = {
     closed: 'Closed',
     open: 'Open',
     days: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+    bookService: 'Book service',
+    bookWithBarber: 'Book barber',
+    serviceDescription: 'Service description',
+    closeModal: 'Close',
+    noDescription: 'No description yet.',
+    noBio: 'No information yet.',
   },
   notFound: {
     title: '404',

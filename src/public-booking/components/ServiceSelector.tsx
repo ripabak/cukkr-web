@@ -59,11 +59,10 @@ export function ServiceSelector({ services, selected, onChange }: ServiceSelecto
           >
             {service.imageUrl ? (
               <Image
-                src={service.imageUrl}
+                src={service.imageThumb ?? service.imageUrl}
                 alt={service.name}
                 width={44}
                 height={44}
-                unoptimized
                 className="w-11 h-11 rounded-xl object-cover flex-shrink-0"
               />
             ) : (

@@ -2,7 +2,7 @@ import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import { getBarbershopInfo, OpenHoursDay } from '@/src/public-booking/actions/booking.actions';
 import { getDictionary } from '@/src/lib/i18n';
-import { BarbershopTabs } from '@/src/public-booking/components/BarbershopTabs';
+import { BarberShopPageClient } from './page.client';
 
 export async function generateMetadata({
   params,
@@ -19,7 +19,7 @@ export async function generateMetadata({
       `Book your appointment or join the walk-in queue at ${barbershop.name}.`;
 
     const ogImage = barbershop.logoUrl
-      ? { url: barbershop.logoUrl, width: 512, height: 512, alt: barbershop.name }
+      ? { url: barbershop.logoMed ?? barbershop.logoUrl, width: 512, height: 512, alt: barbershop.name }
       : undefined;
 
     return {
@@ -88,7 +88,7 @@ export default async function BarbershopLandingPage({
   const today = new Date().getDay();
 
   return (
-    <BarbershopTabs
+    <BarberShopPageClient
       slug={slug}
       barbershop={barbershop}
       status={status}

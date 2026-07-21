@@ -288,6 +288,12 @@ const id = {
     closed: 'Tutup',
     open: 'Buka',
     days: ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'],
+    bookService: 'Book layanan',
+    bookWithBarber: 'Book barber',
+    serviceDescription: 'Deskripsi layanan',
+    closeModal: 'Tutup',
+    noDescription: 'Belum ada deskripsi.',
+    noBio: 'Belum ada informasi.',
   },
   notFound: {
     title: '404',

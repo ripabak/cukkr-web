@@ -40,6 +40,7 @@ export interface PublicService {
   duration?: number;
   description?: string | null;
   imageUrl?: string | null;
+  imageThumb?: string | null;
   isDefault?: boolean;
 }
 
@@ -47,6 +48,8 @@ export interface PublicBarber {
   id: string;
   name: string;
   avatarUrl: string | null;
+  avatarThumb: string | null;
+  bio?: string | null;
 }
 
 export interface PublicFormData {
@@ -66,6 +69,9 @@ export interface BarbershopInfo {
   description?: string | null;
   address?: string | null;
   logoUrl?: string | null;
+  logoThumb?: string | null;
+  logoMed?: string | null;
+  logoFull?: string | null;
   services: PublicService[];
   barbers: PublicBarber[];
   openHours: OpenHoursDay[];

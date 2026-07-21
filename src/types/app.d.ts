@@ -6,7 +6,7 @@ export declare const app: Elysia<"", {
         beforeTime?: bigint | undefined;
         logger: import("logixlysia").Logger;
         pino: import("logixlysia").Pino;
-        cron: Record<"notification-cleanup", import("croner").Cron>;
+        cron: Record<"notification-cleanup", import("croner").Cron> & Record<"stale-booking-cancellation", import("croner").Cron>;
     };
     derive: import("logixlysia").EmptyElysiaSlot;
     resolve: import("logixlysia").EmptyElysiaSlot;
@@ -416,6 +416,55 @@ export declare const app: Elysia<"", {
         barbershop: {};
     } & {
         barbershop: {
+            list: {
+                get: {
+                    body: {};
+                    params: {};
+                    query: {};
+                    headers: {};
+                    response: {
+                        200: {
+                            meta?: {
+                                limit: number;
+                                page: number;
+                                totalItems: number;
+                                totalPages: number;
+                                hasNext: boolean;
+                                hasPrev: boolean;
+                            } | undefined;
+                            message: string;
+                            data: {
+                                id: string;
+                                name: string;
+                                slug: string;
+                                role: string;
+                                description: string | null;
+                                address: string | null;
+                                logoUrl: string | null;
+                                logoThumb: string | null;
+                                logoMed: string | null;
+                                logoFull: string | null;
+                                onboardingCompleted: boolean;
+                            }[];
+                            status: string | number;
+                            path: string;
+                            timeStamp: string;
+                        };
+                        422: {
+                            type: "validation";
+                            on: string;
+                            summary?: string;
+                            message?: string;
+                            found?: unknown;
+                            property?: string;
+                            expected?: string;
+                        };
+                    };
+                };
+            };
+        };
+    } & {
+        barbershop: {
             get: {
                 body: {};
                 params: {};
@@ -439,6 +488,9 @@ export declare const app: Elysia<"", {
                             description: string | null;
                             address: string | null;
                             logoUrl: string | null;
+                            logoThumb: string | null;
+                            logoMed: string | null;
+                            logoFull: string | null;
                             onboardingCompleted: boolean;
                             timezone: string;
                         };
@@ -490,6 +542,9 @@ export declare const app: Elysia<"", {
                                 description: string | null;
                                 address: string | null;
                                 logoUrl: string | null;
+                                logoThumb: string | null;
+                                logoMed: string | null;
+                                logoFull: string | null;
                                 onboardingCompleted: boolean;
                                 timezone: string;
                             };
@@ -617,6 +672,9 @@ export declare const app: Elysia<"", {
                             message: string;
                             data: {
                                 logoUrl: string;
+                                logoThumb: string;
+                                logoMed: string;
+                                logoFull: string;
                             };
                             status: string | number;
                             path: string;
@@ -766,6 +824,9 @@ export declare const app: Elysia<"", {
                             duration: number;
                             id: string;
                             name: string;
+                            imageThumb: string | null;
+                            imageMed: string | null;
+                            imageFull: string | null;
                             createdAt: Date;
                             updatedAt: Date;
                             organizationId: string;
@@ -818,6 +879,9 @@ export declare const app: Elysia<"", {
                             duration: number;
                             id: string;
                             name: string;
+                            imageThumb: string | null;
+                            imageMed: string | null;
+                            imageFull: string | null;
                             createdAt: Date;
                             updatedAt: Date;
                             organizationId: string;
@@ -869,6 +933,9 @@ export declare const app: Elysia<"", {
                                 duration: number;
                                 id: string;
                                 name: string;
+                                imageThumb: string | null;
+                                imageMed: string | null;
+                                imageFull: string | null;
                                 createdAt: Date;
                                 updatedAt: Date;
                                 organizationId: string;
@@ -928,6 +995,9 @@ export declare const app: Elysia<"", {
                                 duration: number;
                                 id: string;
                                 name: string;
+                                imageThumb: string | null;
+                                imageMed: string | null;
+                                imageFull: string | null;
                                 createdAt: Date;
                                 updatedAt: Date;
                                 organizationId: string;
@@ -980,6 +1050,9 @@ export declare const app: Elysia<"", {
                                 duration: number;
                                 id: string;
                                 name: string;
+                                imageThumb: string | null;
+                                imageMed: string | null;
+                                imageFull: string | null;
                                 createdAt: Date;
                                 updatedAt: Date;
                                 organizationId: string;
@@ -1033,6 +1106,9 @@ export declare const app: Elysia<"", {
                                     duration: number;
                                     id: string;
                                     name: string;
+                                    imageThumb: string | null;
+                                    imageMed: string | null;
+                                    imageFull: string | null;
                                     createdAt: Date;
                                     updatedAt: Date;
                                     organizationId: string;
@@ -1086,6 +1162,9 @@ export declare const app: Elysia<"", {
                                 } | undefined;
                                 message: string;
                                 data: {
+                                    imageThumb: string;
+                                    imageMed: string;
+                                    imageFull: string;
                                     imageUrl: string;
                                 };
                                 status: string | number;
@@ -1132,6 +1211,9 @@ export declare const app: Elysia<"", {
                                     duration: number;
                                     id: string;
                                     name: string;
+                                    imageThumb: string | null;
+                                    imageMed: string | null;
+                                    imageFull: string | null;
                                     createdAt: Date;
                                     updatedAt: Date;
                                     organizationId: string;
@@ -1178,10 +1260,10 @@ export declare const app: Elysia<"", {
                 } | {
                     notes?: string | null | undefined;
                     barberId?: string | null | undefined;
+                    customerEmail?: string | null | undefined;
                     type: "appointment";
                     scheduledAt: string;
                     customerName: string;
-                    customerEmail: string;
                     serviceIds: string[];
                 };
                 params: {};
@@ -1204,15 +1286,19 @@ export declare const app: Elysia<"", {
                             createdAt: Date;
                             updatedAt: Date;
                             organizationId: string;
-                            status: "pending" | "requested" | "waiting" | "in_progress" | "completed" | "cancelled";
+                            status: "requested" | "waiting" | "in_progress" | "completed" | "cancelled";
                             customer: {
                                 id: string;
                                 name: string;
                                 email: string | null;
+                                emailVerified: boolean;
                                 phone: string | null;
+                                language: string | null;
                                 createdAt: Date;
                                 updatedAt: Date;
-                                isVerified: boolean;
+                                phoneVerified: boolean;
+                                emailVerifiedAt: Date | null;
+                                phoneVerifiedAt: Date | null;
                                 notes: string | null;
                             };
                             notes: string | null;
@@ -1221,6 +1307,7 @@ export declare const app: Elysia<"", {
                             startedAt: Date | null;
                             completedAt: Date | null;
                             cancelledAt: Date | null;
+                            source: "customer" | "staff";
                             createdById: string;
                             handledByBarber: {
                                 name: string;
@@ -1246,6 +1333,7 @@ export declare const app: Elysia<"", {
                                 role: string;
                                 memberId: string;
                             } | null;
+                            createdByName: string | null;
                         };
                         status: string | number;
                         path: string;
@@ -1313,6 +1401,53 @@ export declare const app: Elysia<"", {
         };
     } & {
         bookings: {
+            "date-markers": {
+                get: {
+                    body: {};
+                    params: {};
+                    query: {
+                        dateFrom?: string | undefined;
+                        dateTo?: string | undefined;
+                    };
+                    headers: {};
+                    response: {
+                        200: {
+                            meta?: {
+                                limit: number;
+                                page: number;
+                                totalItems: number;
+                                totalPages: number;
+                                hasNext: boolean;
+                                hasPrev: boolean;
+                            } | undefined;
+                            message: string;
+                            data: {
+                                markers: {
+                                    [x: string]: {
+                                        requested: boolean;
+                                        waiting: boolean;
+                                    };
+                                };
+                            };
+                            status: string | number;
+                            path: string;
+                            timeStamp: string;
+                        };
+                        422: {
+                            type: "validation";
+                            on: string;
+                            summary?: string;
+                            message?: string;
+                            found?: unknown;
+                            property?: string;
+                            expected?: string;
+                        };
+                    };
+                };
+            };
+        };
+    } & {
+        bookings: {
             requests: {
                 get: {
                     body: {};
@@ -1338,9 +1473,10 @@ export declare const app: Elysia<"", {
                                 type: "walk_in" | "appointment";
                                 id: string;
                                 createdAt: Date;
-                                status: "pending" | "requested" | "waiting" | "in_progress" | "completed" | "cancelled";
+                                status: "requested" | "waiting" | "in_progress" | "completed" | "cancelled";
                                 referenceNumber: string;
                                 scheduledAt: Date | null;
+                                source: "customer" | "staff";
                                 barber: {
                                     name: string;
                                     email: string;
@@ -1349,8 +1485,8 @@ export declare const app: Elysia<"", {
                                     memberId: string;
                                 } | null;
                                 customerName: string;
-                                serviceNames: string[];
                                 totalDuration: number;
+                                serviceNames: string[];
                             }[];
                             status: string | number;
                             path: string;
@@ -1376,7 +1512,7 @@ export declare const app: Elysia<"", {
                 params: {};
                 query: {
                     sort?: "oldest_first" | "recently_added" | undefined;
-                    status?: "pending" | "all" | "requested" | "waiting" | "in_progress" | "completed" | "cancelled" | undefined;
+                    status?: "all" | "requested" | "waiting" | "in_progress" | "completed" | "cancelled" | undefined;
                     barberId?: string | undefined;
                     date: string;
                 };
@@ -1396,9 +1532,10 @@ export declare const app: Elysia<"", {
                             type: "walk_in" | "appointment";
                             id: string;
                             createdAt: Date;
-                            status: "pending" | "requested" | "waiting" | "in_progress" | "completed" | "cancelled";
+                            status: "requested" | "waiting" | "in_progress" | "completed" | "cancelled";
                             referenceNumber: string;
                             scheduledAt: Date | null;
+                            source: "customer" | "staff";
                             barber: {
                                 name: string;
                                 email: string;
@@ -1407,8 +1544,8 @@ export declare const app: Elysia<"", {
                                 memberId: string;
                             } | null;
                             customerName: string;
-                            serviceNames: string[];
                             totalDuration: number;
+                            serviceNames: string[];
                         }[];
                         status: string | number;
                         path: string;
@@ -1467,15 +1604,19 @@ export declare const app: Elysia<"", {
                                 createdAt: Date;
                                 updatedAt: Date;
                                 organizationId: string;
-                                status: "pending" | "requested" | "waiting" | "in_progress" | "completed" | "cancelled";
+                                status: "requested" | "waiting" | "in_progress" | "completed" | "cancelled";
                                 customer: {
                                     id: string;
                                     name: string;
                                     email: string | null;
+                                    emailVerified: boolean;
                                     phone: string | null;
+                                    language: string | null;
                                     createdAt: Date;
                                     updatedAt: Date;
-                                    isVerified: boolean;
+                                    phoneVerified: boolean;
+                                    emailVerifiedAt: Date | null;
+                                    phoneVerifiedAt: Date | null;
                                     notes: string | null;
                                 };
                                 notes: string | null;
@@ -1484,6 +1625,7 @@ export declare const app: Elysia<"", {
                                 startedAt: Date | null;
                                 completedAt: Date | null;
                                 cancelledAt: Date | null;
+                                source: "customer" | "staff";
                                 createdById: string;
                                 handledByBarber: {
                                     name: string;
@@ -1509,6 +1651,7 @@ export declare const app: Elysia<"", {
                                     role: string;
                                     memberId: string;
                                 } | null;
+                                createdByName: string | null;
                             } | null;
                             status: string | number;
                             path: string;
@@ -1554,15 +1697,19 @@ export declare const app: Elysia<"", {
                                 createdAt: Date;
                                 updatedAt: Date;
                                 organizationId: string;
-                                status: "pending" | "requested" | "waiting" | "in_progress" | "completed" | "cancelled";
+                                status: "requested" | "waiting" | "in_progress" | "completed" | "cancelled";
                                 customer: {
                                     id: string;
                                     name: string;
                                     email: string | null;
+                                    emailVerified: boolean;
                                     phone: string | null;
+                                    language: string | null;
                                     createdAt: Date;
                                     updatedAt: Date;
-                                    isVerified: boolean;
+                                    phoneVerified: boolean;
+                                    emailVerifiedAt: Date | null;
+                                    phoneVerifiedAt: Date | null;
                                     notes: string | null;
                                 };
                                 notes: string | null;
@@ -1571,6 +1718,7 @@ export declare const app: Elysia<"", {
                                 startedAt: Date | null;
                                 completedAt: Date | null;
                                 cancelledAt: Date | null;
+                                source: "customer" | "staff";
                                 createdById: string;
                                 handledByBarber: {
                                     name: string;
@@ -1596,6 +1744,7 @@ export declare const app: Elysia<"", {
                                     role: string;
                                     memberId: string;
                                 } | null;
+                                createdByName: string | null;
                             };
                             status: string | number;
                             path: string;
@@ -1621,7 +1770,7 @@ export declare const app: Elysia<"", {
                     patch: {
                         body: {
                             cancelReason?: string | null | undefined;
-                            status: "pending" | "requested" | "waiting" | "in_progress" | "completed" | "cancelled";
+                            status: "requested" | "waiting" | "in_progress" | "completed" | "cancelled";
                         };
                         params: {
                             id: string;
@@ -1645,15 +1794,19 @@ export declare const app: Elysia<"", {
                                     createdAt: Date;
                                     updatedAt: Date;
                                     organizationId: string;
-                                    status: "pending" | "requested" | "waiting" | "in_progress" | "completed" | "cancelled";
+                                    status: "requested" | "waiting" | "in_progress" | "completed" | "cancelled";
                                     customer: {
                                         id: string;
                                         name: string;
                                         email: string | null;
+                                        emailVerified: boolean;
                                         phone: string | null;
+                                        language: string | null;
                                         createdAt: Date;
                                         updatedAt: Date;
-                                        isVerified: boolean;
+                                        phoneVerified: boolean;
+                                        emailVerifiedAt: Date | null;
+                                        phoneVerifiedAt: Date | null;
                                         notes: string | null;
                                     };
                                     notes: string | null;
@@ -1662,6 +1815,7 @@ export declare const app: Elysia<"", {
                                     startedAt: Date | null;
                                     completedAt: Date | null;
                                     cancelledAt: Date | null;
+                                    source: "customer" | "staff";
                                     createdById: string;
                                     handledByBarber: {
                                         name: string;
@@ -1687,6 +1841,7 @@ export declare const app: Elysia<"", {
                                         role: string;
                                         memberId: string;
                                     } | null;
+                                    createdByName: string | null;
                                 };
                                 status: string | number;
                                 path: string;
@@ -1734,15 +1889,19 @@ export declare const app: Elysia<"", {
                                     createdAt: Date;
                                     updatedAt: Date;
                                     organizationId: string;
-                                    status: "pending" | "requested" | "waiting" | "in_progress" | "completed" | "cancelled";
+                                    status: "requested" | "waiting" | "in_progress" | "completed" | "cancelled";
                                     customer: {
                                         id: string;
                                         name: string;
                                         email: string | null;
+                                        emailVerified: boolean;
                                         phone: string | null;
+                                        language: string | null;
                                         createdAt: Date;
                                         updatedAt: Date;
-                                        isVerified: boolean;
+                                        phoneVerified: boolean;
+                                        emailVerifiedAt: Date | null;
+                                        phoneVerifiedAt: Date | null;
                                         notes: string | null;
                                     };
                                     notes: string | null;
@@ -1751,6 +1910,7 @@ export declare const app: Elysia<"", {
                                     startedAt: Date | null;
                                     completedAt: Date | null;
                                     cancelledAt: Date | null;
+                                    source: "customer" | "staff";
                                     createdById: string;
                                     handledByBarber: {
                                         name: string;
@@ -1776,6 +1936,7 @@ export declare const app: Elysia<"", {
                                         role: string;
                                         memberId: string;
                                     } | null;
+                                    createdByName: string | null;
                                 };
                                 status: string | number;
                                 path: string;
@@ -1825,15 +1986,19 @@ export declare const app: Elysia<"", {
                                     createdAt: Date;
                                     updatedAt: Date;
                                     organizationId: string;
-                                    status: "pending" | "requested" | "waiting" | "in_progress" | "completed" | "cancelled";
+                                    status: "requested" | "waiting" | "in_progress" | "completed" | "cancelled";
                                     customer: {
                                         id: string;
                                         name: string;
                                         email: string | null;
+                                        emailVerified: boolean;
                                         phone: string | null;
+                                        language: string | null;
                                         createdAt: Date;
                                         updatedAt: Date;
-                                        isVerified: boolean;
+                                        phoneVerified: boolean;
+                                        emailVerifiedAt: Date | null;
+                                        phoneVerifiedAt: Date | null;
                                         notes: string | null;
                                     };
                                     notes: string | null;
@@ -1842,6 +2007,7 @@ export declare const app: Elysia<"", {
                                     startedAt: Date | null;
                                     completedAt: Date | null;
                                     cancelledAt: Date | null;
+                                    source: "customer" | "staff";
                                     createdById: string;
                                     handledByBarber: {
                                         name: string;
@@ -1867,6 +2033,7 @@ export declare const app: Elysia<"", {
                                         role: string;
                                         memberId: string;
                                     } | null;
+                                    createdByName: string | null;
                                 };
                                 status: string | number;
                                 path: string;
@@ -1916,15 +2083,19 @@ export declare const app: Elysia<"", {
                                     createdAt: Date;
                                     updatedAt: Date;
                                     organizationId: string;
-                                    status: "pending" | "requested" | "waiting" | "in_progress" | "completed" | "cancelled";
+                                    status: "requested" | "waiting" | "in_progress" | "completed" | "cancelled";
                                     customer: {
                                         id: string;
                                         name: string;
                                         email: string | null;
+                                        emailVerified: boolean;
                                         phone: string | null;
+                                        language: string | null;
                                         createdAt: Date;
                                         updatedAt: Date;
-                                        isVerified: boolean;
+                                        phoneVerified: boolean;
+                                        emailVerifiedAt: Date | null;
+                                        phoneVerifiedAt: Date | null;
                                         notes: string | null;
                                     };
                                     notes: string | null;
@@ -1933,6 +2104,7 @@ export declare const app: Elysia<"", {
                                     startedAt: Date | null;
                                     completedAt: Date | null;
                                     cancelledAt: Date | null;
+                                    source: "customer" | "staff";
                                     createdById: string;
                                     handledByBarber: {
                                         name: string;
@@ -1958,6 +2130,7 @@ export declare const app: Elysia<"", {
                                         role: string;
                                         memberId: string;
                                     } | null;
+                                    createdByName: string | null;
                                 };
                                 status: string | number;
                                 path: string;
@@ -1991,6 +2164,7 @@ export declare const app: Elysia<"", {
                     search?: string | undefined;
                     limit?: number | undefined;
                     page?: number | undefined;
+                    hasContact?: boolean | undefined;
                 };
                 headers: {};
                 response: {
@@ -2008,8 +2182,9 @@ export declare const app: Elysia<"", {
                             id: string;
                             name: string;
                             email: string | null;
+                            emailVerified: boolean;
                             phone: string | null;
-                            isVerified: boolean;
+                            phoneVerified: boolean;
                             totalBookings: number;
                             totalSpend: number;
                             lastVisitAt: Date | null;
@@ -2055,9 +2230,10 @@ export declare const app: Elysia<"", {
                                 id: string;
                                 name: string;
                                 email: string | null;
+                                emailVerified: boolean;
                                 phone: string | null;
                                 createdAt: Date;
-                                isVerified: boolean;
+                                phoneVerified: boolean;
                                 notes: string | null;
                                 totalBookings: number;
                                 totalSpend: number;
@@ -2095,6 +2271,7 @@ export declare const app: Elysia<"", {
                         };
                         query: {
                             type?: "all" | "walk_in" | "appointment" | undefined;
+                            status?: "all" | "requested" | "waiting" | "in_progress" | "completed" | "cancelled" | undefined;
                             limit?: number | undefined;
                             page?: number | undefined;
                         };
@@ -2121,6 +2298,7 @@ export declare const app: Elysia<"", {
                                         price: number;
                                     }[];
                                     totalAmount: number;
+                                    handledByName: string | null;
                                 }[];
                                 status: string | number;
                                 path: string;
@@ -2168,9 +2346,10 @@ export declare const app: Elysia<"", {
                                     id: string;
                                     name: string;
                                     email: string | null;
+                                    emailVerified: boolean;
                                     phone: string | null;
                                     createdAt: Date;
-                                    isVerified: boolean;
+                                    phoneVerified: boolean;
                                     notes: string | null;
                                     totalBookings: number;
                                     totalSpend: number;
@@ -2180,6 +2359,50 @@ export declare const app: Elysia<"", {
                                     completedCount: number;
                                     cancelledCount: number;
                                 };
+                                status: string | number;
+                                path: string;
+                                timeStamp: string;
+                            };
+                            422: {
+                                type: "validation";
+                                on: string;
+                                summary?: string;
+                                message?: string;
+                                found?: unknown;
+                                property?: string;
+                                expected?: string;
+                            };
+                        };
+                    };
+                };
+            };
+        };
+    } & {
+        customers: {
+            ":id": {
+                chart: {
+                    get: {
+                        body: {};
+                        params: {
+                            id: string;
+                        };
+                        query: {};
+                        headers: {};
+                        response: {
+                            200: {
+                                meta?: {
+                                    limit: number;
+                                    page: number;
+                                    totalItems: number;
+                                    totalPages: number;
+                                    hasNext: boolean;
+                                    hasPrev: boolean;
+                                } | undefined;
+                                message: string;
+                                data: {
+                                    value: number;
+                                    label: string;
+                                }[];
                                 status: string | number;
                                 path: string;
                                 timeStamp: string;
@@ -2321,6 +2544,9 @@ export declare const app: Elysia<"", {
                             updatedAt: Date;
                             role: string | null;
                             avatarUrl: string | null;
+                            avatarThumb: string | null;
+                            avatarMed: string | null;
+                            avatarFull: string | null;
                         };
                         status: string | number;
                         path: string;
@@ -2369,6 +2595,9 @@ export declare const app: Elysia<"", {
                             updatedAt: Date;
                             role: string | null;
                             avatarUrl: string | null;
+                            avatarThumb: string | null;
+                            avatarMed: string | null;
+                            avatarFull: string | null;
                         };
                         status: string | number;
                         path: string;
@@ -2409,6 +2638,9 @@ export declare const app: Elysia<"", {
                             message: string;
                             data: {
                                 avatarUrl: string;
+                                avatarThumb: string;
+                                avatarMed: string;
+                                avatarFull: string;
                             };
                             status: string | number;
                             path: string;
@@ -2581,6 +2813,7 @@ export declare const app: Elysia<"", {
                                 topBarber: {
                                     id: string;
                                     name: string;
+                                    imageThumb: string | null;
                                     imageUrl: string | null;
                                     count: number;
                                     revenue: number;
@@ -2588,6 +2821,7 @@ export declare const app: Elysia<"", {
                                 topService: {
                                     id: string;
                                     name: string;
+                                    imageThumb: string | null;
                                     imageUrl: string | null;
                                     count: number;
                                     revenue: number;
@@ -2924,6 +3158,7 @@ export declare const app: Elysia<"", {
                                 message: string;
                                 data: {
                                     name: string;
+                                    imageThumb: string | null;
                                     imageUrl: string | null;
                                     barberId: string;
                                     totalCustomers: number;
@@ -3093,6 +3328,7 @@ export declare const app: Elysia<"", {
                             referenceType: "invitation" | "booking" | null;
                             actionedAs: "accepted" | "declined" | null;
                             isRead: boolean;
+                            organizationName: string;
                             actionType: "accept_decline_appointment" | "accept_decline_invite" | null;
                         }[];
                         status: string | number;
@@ -3133,6 +3369,46 @@ export declare const app: Elysia<"", {
                             data: {
                                 count: number;
                             };
+                            status: string | number;
+                            path: string;
+                            timeStamp: string;
+                        };
+                        422: {
+                            type: "validation";
+                            on: string;
+                            summary?: string;
+                            message?: string;
+                            found?: unknown;
+                            property?: string;
+                            expected?: string;
+                        };
+                    };
+                };
+            };
+        };
+    } & {
+        notifications: {
+            "unread-count-by-org": {
+                get: {
+                    body: {};
+                    params: {};
+                    query: {};
+                    headers: {};
+                    response: {
+                        200: {
+                            meta?: {
+                                limit: number;
+                                page: number;
+                                totalItems: number;
+                                totalPages: number;
+                                hasNext: boolean;
+                                hasPrev: boolean;
+                            } | undefined;
+                            message: string;
+                            data: {
+                                organizationId: string;
+                                count: number;
+                            }[];
                             status: string | number;
                             path: string;
                             timeStamp: string;
@@ -3531,10 +3807,14 @@ export declare const app: Elysia<"", {
                                     description: string | null;
                                     address: string | null;
                                     logoUrl: string | null;
+                                    logoThumb: string | null;
+                                    logoMed: string | null;
+                                    logoFull: string | null;
                                     services: {
                                         duration: number;
                                         id: string;
                                         name: string;
+                                        imageThumb: string | null;
                                         description: string | null;
                                         price: number;
                                         discount: number;
@@ -3545,6 +3825,13 @@ export declare const app: Elysia<"", {
                                         id: string;
                                         name: string;
                                         avatarUrl: string | null;
+                                        avatarThumb: string | null;
+                                    }[];
+                                    openHours: {
+                                        dayOfWeek: number;
+                                        isOpen: boolean;
+                                        openTime: string | null;
+                                        closeTime: string | null;
                                     }[];
                                 };
                                 status: string | number;
@@ -3735,6 +4022,7 @@ export declare const app: Elysia<"", {
                                 notes?: string | null | undefined;
                                 barberId?: string | null | undefined;
                                 customerEmail?: string | null | undefined;
+                                lang?: string | undefined;
                                 customerName: string;
                                 serviceIds: string[];
                                 validationToken: string;
@@ -3761,15 +4049,19 @@ export declare const app: Elysia<"", {
                                         createdAt: Date;
                                         updatedAt: Date;
                                         organizationId: string;
-                                        status: "pending" | "requested" | "waiting" | "in_progress" | "completed" | "cancelled";
+                                        status: "requested" | "waiting" | "in_progress" | "completed" | "cancelled";
                                         customer: {
                                             id: string;
                                             name: string;
                                             email: string | null;
+                                            emailVerified: boolean;
                                             phone: string | null;
+                                            language: string | null;
                                             createdAt: Date;
                                             updatedAt: Date;
-                                            isVerified: boolean;
+                                            phoneVerified: boolean;
+                                            emailVerifiedAt: Date | null;
+                                            phoneVerifiedAt: Date | null;
                                             notes: string | null;
                                         };
                                         notes: string | null;
@@ -3778,6 +4070,7 @@ export declare const app: Elysia<"", {
                                         startedAt: Date | null;
                                         completedAt: Date | null;
                                         cancelledAt: Date | null;
+                                        source: "customer" | "staff";
                                         createdById: string;
                                         handledByBarber: {
                                             name: string;
@@ -3803,6 +4096,7 @@ export declare const app: Elysia<"", {
                                             role: string;
                                             memberId: string;
                                         } | null;
+                                        createdByName: string | null;
                                     };
                                     status: string | number;
                                     path: string;
@@ -3832,6 +4126,7 @@ export declare const app: Elysia<"", {
                             body: {
                                 notes?: string | null | undefined;
                                 barberId?: string | null | undefined;
+                                lang?: string | undefined;
                                 scheduledAt: string;
                                 customerName: string;
                                 customerEmail: string;
@@ -3912,6 +4207,108 @@ export declare const app: Elysia<"", {
                                         } | undefined;
                                         message: string;
                                         data: {
+                                            status: "verified" | "already_verified" | "invalid";
+                                            bookingId: string | null;
+                                            verified: boolean;
+                                        };
+                                        status: string | number;
+                                        path: string;
+                                        timeStamp: string;
+                                    };
+                                    422: {
+                                        type: "validation";
+                                        on: string;
+                                        summary?: string;
+                                        message?: string;
+                                        found?: unknown;
+                                        property?: string;
+                                        expected?: string;
+                                    };
+                                };
+                            };
+                        };
+                    };
+                };
+            };
+        };
+    } & {
+        public: {
+            booking: {
+                ":slug": {
+                    identity: {
+                        check: {
+                            get: {
+                                body: unknown;
+                                params: {
+                                    slug: string;
+                                };
+                                query: {
+                                    token: string;
+                                };
+                                headers: unknown;
+                                response: {
+                                    200: {
+                                        meta?: {
+                                            limit: number;
+                                            page: number;
+                                            totalItems: number;
+                                            totalPages: number;
+                                            hasNext: boolean;
+                                            hasPrev: boolean;
+                                        } | undefined;
+                                        message: string;
+                                        data: {
+                                            customerName: string | null;
+                                            valid: boolean;
+                                        };
+                                        status: string | number;
+                                        path: string;
+                                        timeStamp: string;
+                                    };
+                                    422: {
+                                        type: "validation";
+                                        on: string;
+                                        summary?: string;
+                                        message?: string;
+                                        found?: unknown;
+                                        property?: string;
+                                        expected?: string;
+                                    };
+                                };
+                            };
+                        };
+                    };
+                };
+            };
+        };
+    } & {
+        public: {
+            booking: {
+                ":slug": {
+                    identity: {
+                        verify: {
+                            get: {
+                                body: unknown;
+                                params: {
+                                    slug: string;
+                                };
+                                query: {
+                                    token: string;
+                                };
+                                headers: unknown;
+                                response: {
+                                    200: {
+                                        meta?: {
+                                            limit: number;
+                                            page: number;
+                                            totalItems: number;
+                                            totalPages: number;
+                                            hasNext: boolean;
+                                            hasPrev: boolean;
+                                        } | undefined;
+                                        message: string;
+                                        data: {
+                                            status: "verified" | "already_verified" | "invalid";
                                             bookingId: string | null;
                                             verified: boolean;
                                         };

@@ -185,6 +185,7 @@ const en = {
       emailOptional: '(optional)',
       nameError: 'Please enter your full name.',
       emailError: 'Please enter a valid email address.',
+      bookingWindowHint: 'Bookable from {min}h from now up to {max} days ahead',
     },
     walkIn: {
       title: 'Walk-in Check-in',
@@ -294,6 +295,7 @@ const en = {
     closeModal: 'Close',
     noDescription: 'No description yet.',
     noBio: 'No information yet.',
+    bookingWindowInfo: 'Bookings can be made from {min}h to {max} days in advance.',
   },
   notFound: {
     title: '404',

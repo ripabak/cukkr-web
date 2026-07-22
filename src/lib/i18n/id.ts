@@ -185,6 +185,7 @@ const id = {
       emailOptional: '(opsional)',
       nameError: 'Tolong masukkan nama lengkap.',
       emailError: 'Tolong masukkan alamat email yang valid.',
+      bookingWindowHint: 'Bisa booking dari {min}h ke depan hingga maksimal {max} hari ke depan',
     },
     walkIn: {
       title: 'Walk-in Check-in',
@@ -294,6 +295,7 @@ const id = {
     closeModal: 'Tutup',
     noDescription: 'Belum ada deskripsi.',
     noBio: 'Belum ada informasi.',
+    bookingWindowInfo: 'Pemesanan dapat dilakukan dari {min}h hingga {max} hari ke depan.',
   },
   notFound: {
     title: '404',

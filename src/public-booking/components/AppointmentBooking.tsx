@@ -9,7 +9,7 @@ import {
   getDateAvailability,
   type DateAvailability,
 } from '@/src/public-booking/actions/booking.actions';
-import type { PublicFormData } from '@/src/public-booking/actions/booking.actions';
+import type { PublicFormData, BookingWindowLimits } from '@/src/public-booking/actions/booking.actions';
 import { BookingHeader } from '@/src/public-booking/components/BookingHeader';
 import { PublicIdentityForm } from '@/src/public-booking/components/PublicIdentityForm';
 import { ServiceSelector } from '@/src/public-booking/components/ServiceSelector';
@@ -74,7 +74,12 @@ export function AppointmentBooking({ slug, formData, dict }: Props) {
 
   const stepIndex = ORDERED.indexOf(step);
   const currentStepNumber = stepIndex === -1 ? ORDERED.length : stepIndex + 1;
-  const todayStr = new Date().toISOString().split('T')[0];
+  const bw: BookingWindowLimits = formData.bookingWindow;
+  const now = Date.now();
+  const minDate = new Date(now + bw.minAdvanceHours * 3600 * 1000);
+  const maxDate = new Date(now + bw.maxAdvanceDays * 86400 * 1000);
+  const minDateStr = minDate.toISOString().split('T')[0];
+  const maxDateStr = maxDate.toISOString().split('T')[0];
 
   const stepTitles: Record<Step, string> = {
     details: t(dict, 'booking.steps.details'),
@@ -90,9 +95,15 @@ export function AppointmentBooking({ slug, formData, dict }: Props) {
     success: '',
   };
 
+  const isToday = dateValue === new Date().toISOString().split('T')[0];
+  const minTimeMs = isToday ? Date.now() + bw.minAdvanceHours * 3600 * 1000 : 0;
   const timeSlots =
     availability?.isOpen && availability.openTime && availability.closeTime
-      ? generateTimeSlots(availability.openTime, availability.closeTime)
+      ? generateTimeSlots(availability.openTime, availability.closeTime).filter((slot) => {
+          if (!isToday) return true;
+          const [h, m] = slot.split(':').map(Number);
+          return new Date().setHours(h, m, 0, 0) >= minTimeMs;
+        })
       : [];
 
   const handleDateChange = async (date: string) => {
@@ -247,11 +258,18 @@ export function AppointmentBooking({ slug, formData, dict }: Props) {
               <label className="block text-sm font-semibold mb-1.5 text-[var(--ink)]" htmlFor="booking-date">
                 {t(dict, 'booking.steps.dateLabel')} <span className="text-[#ef4444]">*</span>
               </label>
+              <p className="text-xs text-[var(--ink-muted)] mb-2">
+                {t(dict, 'booking.steps.bookingWindowHint', {
+                  min: String(bw.minAdvanceHours),
+                  max: String(bw.maxAdvanceDays),
+                })}
+              </p>
               <input
                 id="booking-date"
                 type="date"
                 value={dateValue}
-                min={todayStr}
+                min={minDateStr}
+                 max={maxDateStr}
                 onChange={e => handleDateChange(e.target.value)}
                 className="w-full min-w-0 px-4 py-3 rounded-xl text-sm outline-none transition-all border-2 border-[var(--border)] text-[var(--ink)] bg-[var(--paper)] focus:border-[var(--accent)]"
               />

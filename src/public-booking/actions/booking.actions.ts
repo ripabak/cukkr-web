@@ -52,9 +52,15 @@ export interface PublicBarber {
   bio?: string | null;
 }
 
+export interface BookingWindowLimits {
+  minAdvanceHours: number;
+  maxAdvanceDays: number;
+}
+
 export interface PublicFormData {
   services: PublicService[];
   barbers: PublicBarber[];
+  bookingWindow: BookingWindowLimits;
 }
 
 export interface OpenHoursDay {
@@ -76,6 +82,7 @@ export interface BarbershopInfo {
   services: PublicService[];
   barbers: PublicBarber[];
   openHours: OpenHoursDay[];
+  bookingWindow: BookingWindowLimits;
 }
 
 export async function getBarbershopInfo(slug: string): Promise<BarbershopInfo> {

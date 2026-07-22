@@ -150,17 +150,18 @@ export function BarbershopTabs({ slug, barbershop, status, today, dict }: Barber
         </div>
       </div>
 
-      {/* Booking window info */}
-      <div className="px-4 pb-3">
-        <div className="max-w-sm mx-auto">
-          <div className="rounded-xl px-4 py-2.5 text-xs bg-[var(--gold-surface)] border border-[var(--accent)]/30 text-[var(--ink-soft)] text-center leading-relaxed">
-            {t(dict, 'barbershopPage.bookingWindowInfo', {
-              min: String(barbershop.bookingWindow.minAdvanceHours),
-              max: String(barbershop.bookingWindow.maxAdvanceDays),
-            })}
+      {barbershop.bookingWindow && (
+        <div className="px-4 pb-3">
+          <div className="max-w-sm mx-auto">
+            <div className="rounded-xl px-4 py-2.5 text-xs bg-[var(--gold-surface)] border border-[var(--accent)]/30 text-[var(--ink-soft)] text-center leading-relaxed">
+              {t(dict, 'barbershopPage.bookingWindowInfo', {
+                min: String(barbershop.bookingWindow.minAdvanceHours),
+                max: String(barbershop.bookingWindow.maxAdvanceDays),
+              })}
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
       {/* Tabs */}
       <div className="sticky top-0 z-30 bg-[var(--paper)]/95 backdrop-blur-sm border-b border-[var(--border)]">

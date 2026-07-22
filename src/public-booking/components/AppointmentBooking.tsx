@@ -76,8 +76,8 @@ export function AppointmentBooking({ slug, formData, dict }: Props) {
   const currentStepNumber = stepIndex === -1 ? ORDERED.length : stepIndex + 1;
   const bw: BookingWindowLimits = formData.bookingWindow;
   const now = Date.now();
-  const minDate = new Date(now + bw.minAdvanceHours * 3600 * 1000);
-  const maxDate = new Date(now + bw.maxAdvanceDays * 86400 * 1000);
+  const minDate = new Date(now + (bw?.minAdvanceHours ?? 2) * 3600 * 1000);
+  const maxDate = new Date(now + (bw?.maxAdvanceDays ?? 30) * 86400 * 1000);
   const minDateStr = minDate.toISOString().split('T')[0];
   const maxDateStr = maxDate.toISOString().split('T')[0];
 
@@ -96,7 +96,7 @@ export function AppointmentBooking({ slug, formData, dict }: Props) {
   };
 
   const isToday = dateValue === new Date().toISOString().split('T')[0];
-  const minTimeMs = isToday ? Date.now() + bw.minAdvanceHours * 3600 * 1000 : 0;
+  const minTimeMs = isToday ? Date.now() + (bw?.minAdvanceHours ?? 2) * 3600 * 1000 : 0;
   const timeSlots =
     availability?.isOpen && availability.openTime && availability.closeTime
       ? generateTimeSlots(availability.openTime, availability.closeTime).filter((slot) => {
@@ -260,8 +260,8 @@ export function AppointmentBooking({ slug, formData, dict }: Props) {
               </label>
               <p className="text-xs text-[var(--ink-muted)] mb-2">
                 {t(dict, 'booking.steps.bookingWindowHint', {
-                  min: String(bw.minAdvanceHours),
-                  max: String(bw.maxAdvanceDays),
+                  min: String(bw?.minAdvanceHours ?? 2),
+                  max: String(bw?.maxAdvanceDays ?? 30),
                 })}
               </p>
               <input

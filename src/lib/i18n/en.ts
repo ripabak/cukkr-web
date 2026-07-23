@@ -185,6 +185,8 @@ const en = {
       emailOptional: '(optional)',
       nameError: 'Please enter your full name.',
       emailError: 'Please enter a valid email address.',
+      outsideWindowMin: 'Must book at least {hours}h in advance.',
+      outsideWindowMax: 'Can only book up to {days} days ahead.',
       bookingWindowHint: 'Bookable from {min}h from now up to {max} days ahead',
     },
     walkIn: {

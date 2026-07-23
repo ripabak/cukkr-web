@@ -185,6 +185,8 @@ const id = {
       emailOptional: '(opsional)',
       nameError: 'Tolong masukkan nama lengkap.',
       emailError: 'Tolong masukkan alamat email yang valid.',
+      outsideWindowMin: 'Harus booking minimal {hours} jam dari sekarang.',
+      outsideWindowMax: 'Maksimal booking {days} hari ke depan.',
       bookingWindowHint: 'Bisa booking dari {min}h ke depan hingga maksimal {max} hari ke depan',
     },
     walkIn: {

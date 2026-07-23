@@ -70,6 +70,7 @@ export function AppointmentBooking({ slug, formData, dict }: Props) {
   const [timeValue, setTimeValue] = useState('');
   const [availability, setAvailability] = useState<DateAvailability | null>(null);
   const [isLoadingAvailability, setIsLoadingAvailability] = useState(false);
+  const [outOfWindowReason, setOutOfWindowReason] = useState<'tooEarly' | 'tooLate' | null>(null);
   const [isSubmitPending, startSubmitTransition] = useTransition();
 
   const stepIndex = ORDERED.indexOf(step);
@@ -110,7 +111,19 @@ export function AppointmentBooking({ slug, formData, dict }: Props) {
     setDateValue(date);
     setTimeValue('');
     setAvailability(null);
+    setOutOfWindowReason(null);
     if (!date) return;
+
+    const selectedDateStart = new Date(date + 'T00:00:00').getTime();
+    if (selectedDateStart > maxDate.getTime()) {
+      setOutOfWindowReason('tooLate');
+      return;
+    }
+    if (selectedDateStart < new Date(minDateStr + 'T00:00:00').getTime()) {
+      setOutOfWindowReason('tooEarly');
+      return;
+    }
+
     setIsLoadingAvailability(true);
     try {
       const result = await getDateAvailability(slug, date);
@@ -289,13 +302,21 @@ export function AppointmentBooking({ slug, formData, dict }: Props) {
                   </div>
                 )}
 
-                {!isLoadingAvailability && availability && !availability.isOpen && (
+                {!isLoadingAvailability && outOfWindowReason && (
+                  <div className="rounded-xl px-4 py-3 text-sm bg-[#fef2f2] border border-[#fecaca] text-[#b91c1c]">
+                    {outOfWindowReason === 'tooEarly'
+                      ? t(dict, 'booking.steps.outsideWindowMin', { hours: String(bw?.minAdvanceHours ?? 2) })
+                      : t(dict, 'booking.steps.outsideWindowMax', { days: String(bw?.maxAdvanceDays ?? 30) })}
+                  </div>
+                )}
+
+                {!isLoadingAvailability && !outOfWindowReason && availability && !availability.isOpen && (
                   <div className="rounded-xl px-4 py-3 text-sm bg-[#fef2f2] border border-[#fecaca] text-[#b91c1c]">
                     {t(dict, 'booking.steps.closedOnDate')}
                   </div>
                 )}
 
-                {!isLoadingAvailability && timeSlots.length > 0 && (
+                {!isLoadingAvailability && !outOfWindowReason && timeSlots.length > 0 && (
                   <div className="grid grid-cols-4 gap-2">
                     {timeSlots.map(slot => (
                       <button
@@ -312,6 +333,12 @@ export function AppointmentBooking({ slug, formData, dict }: Props) {
                         {slot}
                       </button>
                     ))}
+                  </div>
+                )}
+
+                {!isLoadingAvailability && !outOfWindowReason && availability && availability.isOpen && timeSlots.length === 0 && (
+                  <div className="rounded-xl px-4 py-3 text-sm bg-[#fef2f2] border border-[#fecaca] text-[#b91c1c]">
+                    {t(dict, 'booking.steps.noSlots')}
                   </div>
                 )}
               </div>
